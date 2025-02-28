@@ -47,7 +47,7 @@ jobs:
                   USER: ${{ secrets.GCP_VM_USER }} # SSH user on your VM instance
                   ENV_CONTENT: ${{ secrets.ENV }}
               run: |
-                  ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+                  ssh -o StrictHostKeyChecking=no -p 443 $USER@$HOST << 'EOF'
                     sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ vars.SERVICE_NAME }}:latest
 
                     sudo docker stop ${{ vars.SERVICE_NAME }} || true
