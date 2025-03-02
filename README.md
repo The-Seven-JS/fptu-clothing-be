@@ -1,1 +1,1 @@
-aNH qUÝ 10 điem
+aNH qUÝ âm điểm

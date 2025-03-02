@@ -9,7 +9,7 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"description": "aNH qUÝ 10 điem",
+	"description": "aNH qUÝ âm điểm",
 	"dependencies": {
 		"body-parser": "^1.20.3",
 		"cors": "^2.8.5",
