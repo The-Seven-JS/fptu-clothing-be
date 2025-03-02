@@ -13,8 +13,11 @@
 	"dependencies": {
 		"body-parser": "^1.20.3",
 		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
-		"http-errors": "^2.0.0"
+		"http-errors": "^2.0.0",
+		"multer": "^1.4.5-lts.1",
+		"pg": "^8.13.3"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.9"
@@ -26,5 +29,6 @@
 	"bugs": {
 		"url": "https://github.com/The-Seven-JS/fptu-clothing-be/issues"
 	},
-	"homepage": "https://github.com/The-Seven-JS/fptu-clothing-be#readme"
+	"homepage": "https://github.com/The-Seven-JS/fptu-clothing-be#readme",
+	"type": "commonjs"
 }

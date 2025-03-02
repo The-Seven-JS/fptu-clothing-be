@@ -15,6 +15,13 @@ app.use(
 
 app.use("/api/demo", demoRouter);
 
+// Middleware đọc JSON requests
+app.use(express.json());
+
+// Sử dụng router của articles.js
+const usersRouter = require("./routes/articles");
+app.use("/articles", usersRouter);
+
 app.use(function (req, res, next) {
   return next(createError(404, "Path not found"));
 });
