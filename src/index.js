@@ -20,18 +20,6 @@ app.use(
 
 app.use("/api/demo", demoRouter);
 
-app.use(function (req, res, next) {
-  return next(createError(404, "Path not found"));
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
-    code: err.status || 500,
-  });
-});
-
 app.get("/attributes", (req, res) => { //trang rieng chon nam or nu
     const { gender } = req.query;
     if (gender === "male") return res.json(attribute_data_male);
@@ -54,6 +42,20 @@ app.get("/advice", (req, res) => {// trang rieng chon thuoc tinh => ket qua
 
     res.json(advice);
 });
+
+app.use(function (req, res, next) {
+  return next(createError(404, "Path not found"));
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error",
+    code: err.status || 500,
+  });
+});
+
+
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
