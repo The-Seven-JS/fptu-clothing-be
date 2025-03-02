@@ -28,7 +28,7 @@ loginRoute.post("/", async (req, res) => {
 
     const token = createToken(name);
     res.cookie("jwt", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
-    res.status(200).json({ message: "Login successful" });
+    res.json({ message: "Login successful" });
   } catch (err) {
     res.status(500).json({ error: "User login failed" });
   }
