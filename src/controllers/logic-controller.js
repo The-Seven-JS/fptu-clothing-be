@@ -7,14 +7,14 @@ const male_advice = require("../male_advice.json");
 const female_advice = require("../female_advice.json");
 logicRoute.use(express.json());
 
-app.get("/attributes", (req, res) => {
+logicRoute.get("/attributes", (req, res) => {
   //trang rieng chon nam or nu
   const { gender } = req.query;
   if (gender === "male") return res.json(attribute_data_male);
   if (gender === "female") return res.json(attribute_data_female);
   return res.status(400).json({ error: "error" });
 });
-app.get("/advice", (req, res) => {
+logicRoute.get("/advice", (req, res) => {
   // trang rieng chon thuoc tinh => ket qua
   const { gender, shape, skin, leg, bmi } = req.query;
   if (!gender || !shape || !skin || !leg || !bmi) {
