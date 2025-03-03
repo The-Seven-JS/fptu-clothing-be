@@ -19,7 +19,7 @@ app.use("/api/demo", demoRouter);
 app.use(express.json());
 
 // Sử dụng router của articles.js
-const usersRouter = require("./routes/articles");
+const usersRouter = require("./routes/articleRoutes");
 app.use("/articles", usersRouter);
 
 //Middleware xử lý lỗi 404

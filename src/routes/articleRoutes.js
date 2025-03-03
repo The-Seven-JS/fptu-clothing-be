@@ -6,6 +6,7 @@ const pool = require("../config/db");
 router.get("/", async (req, res) => {
     try {
       const result = await pool.query("SELECT * FROM articles");
+      console.log(originalUrl);
       res.json(result.rows);
     } catch (err) {
       console.error("Lỗi truy vấn:", err);
@@ -21,6 +22,7 @@ router.get("/", async (req, res) => {
         "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'completed') RETURNING *",
         [title, content]
       );
+      console.log(originalUrl);
       res.json(result.rows[0]);
     } catch (err) {
       console.error("Lỗi truy vấn:", err);
@@ -33,6 +35,7 @@ router.get("/", async (req, res) => {
     try {
       const { id } = req.params;
       const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [id]);
+      console.log(originalUrl);
       if (result.rowCount === 0)  
         return res.status(404).send("Article not found");
       else
@@ -53,6 +56,7 @@ router.get("/", async (req, res) => {
         "UPDATE articles SET title = $1, content = $2, updated_at = $3 WHERE id = $4 RETURNING *",
         [title, content, timestamp, id]
       );
+      console.log(originalUrl);
       if (result.rowCount === 0)  
         return res.status(404).send("Article not found");
       else
