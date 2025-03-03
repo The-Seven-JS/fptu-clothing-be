@@ -23,10 +23,19 @@ app.get("/", (req, res) => {
   });
 });
 
+// Middleware đọc JSON requests
+app.use(express.json());
+
+// Sử dụng router của articles.js
+const usersRouter = require("./routes/articleRoutes");
+app.use("/articles", usersRouter);
+
+//Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
   return next(createError(404, "Path not found"));
 });
 
+//Middleware xử lý lỗi chung
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
