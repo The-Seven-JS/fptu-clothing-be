@@ -17,13 +17,16 @@ const getArticles = async (req, res) => {
  const addArticle = async (req, res) => {
     try {
       const { title, content } = req.body;
-      const result = await pool.query(
-        "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'completed') RETURNING *",
-        [title, content]
-      );
+      if (!title || !content) return res.status(400).send("Missing title or content");
+      else {
+        res.json(result.rows[0]);
+        const result = await pool.query(
+        "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'completed') RETURNING *",[title, content]);
+        console.log(result.rows);
+        }
       console.log(req.originalUrl);
-      console.log(result.rows);
-      res.json(result.rows[0]);
+     
+      
     } catch (err) {
       console.error("Lỗi truy vấn:", err);
       res.status(500).send("Lỗi server");
