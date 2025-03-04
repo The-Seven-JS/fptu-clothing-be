@@ -27,7 +27,12 @@ loginRoute.post("/", async (req, res) => {
       return res.status(400).json({ error: "Wrong password" });
 
     const token = createToken(name);
-    res.cookie("jwt", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 1000,
+    });
     res.json({ message: "Login successful" });
   } catch (err) {
     res.status(500).json({ error: "User login failed" });
