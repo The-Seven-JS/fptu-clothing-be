@@ -15,10 +15,10 @@ dotenv.config();
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5500", // Change this to match your frontend URL
+    origin: "http://localhost:5500",
     credentials: true,
   })
-); // Allow frontend requests
+);
 app.use(
   bodyParser.urlencoded({
     extended: true,
