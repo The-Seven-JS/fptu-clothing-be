@@ -30,7 +30,9 @@ pool.query("SELECT NOW()", (err, res) => {
 app.use("/login", logoutRoute);
 app.use("/logout", loginRoute);
 
-app.get("/admin", requireAuth, (req, res) => {});
+app.get("/admin", requireAuth, (req, res) => {
+  res.json({ message: "Welcome to Admin Page" });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
