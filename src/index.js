@@ -8,8 +8,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const requireAuth = require("../middleware/authmiddleware");
-const loginRoute = require("./controllers/login-controller");
-const logoutRoute = require("./controllers/logout-controller");
+const loginRoute = require("./routes/login-route");
+const logoutRoute = require("./routes/logout-route");
 
 dotenv.config();
 const app = express();
@@ -30,9 +30,7 @@ pool.query("SELECT NOW()", (err, res) => {
 app.use("/login", logoutRoute);
 app.use("/logout", loginRoute);
 
-app.get("/admin", requireAuth, (req, res) => {
-  res.json({ message: "OK" });
-});
+app.get("/admin", requireAuth, (req, res) => {});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
