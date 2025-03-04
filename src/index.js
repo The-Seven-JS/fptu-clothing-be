@@ -14,8 +14,7 @@ const logoutRoute = require("./routes/logout-route");
 dotenv.config();
 const app = express();
 app.use(
-  cors({
-    origin: "http://localhost:5500", // Change this to match your frontend URL
+  cors({ 
     credentials: true,
   })
 ); // Allow frontend requests
