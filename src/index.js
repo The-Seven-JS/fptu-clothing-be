@@ -27,8 +27,8 @@ pool.query("SELECT NOW()", (err, res) => {
   else console.log("Connected to PostgreSQL at:", res.rows[0].now);
 });
 
-app.use("/login", logoutRoute);
-app.use("/logout", loginRoute);
+app.use("/login", loginRoute);
+app.use("/logout", logoutRoute);
 
 app.get("/admin", requireAuth, (req, res) => {
   res.json({ message: "Welcome to Admin Page" });
