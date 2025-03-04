@@ -2,8 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const createError = require("http-errors");
 const cors = require("cors");
+const usersRouter = require("./routes/articleRoutes");
 const demoRouter = require("./routes/demo-routes");
-const logicRoute = require("./controllers/logic-controller");
+const logicRoute = require("./routes/logic-route");
 
 const app = express();
 app.use(express.json());
@@ -23,11 +24,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// Middleware đọc JSON requests
-app.use(express.json());
 
 // Sử dụng router của articles.js
-const usersRouter = require("./routes/articleRoutes");
 app.use("/articles", usersRouter);
 
 //Middleware xử lý lỗi 404
