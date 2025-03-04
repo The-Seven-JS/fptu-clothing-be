@@ -7,14 +7,14 @@ const requireAuth = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodeToken) => {
       if (err) {
         console.log(err.message);
-        res.redirect("/");
+        return res.status(401).json({ message: "Unauthorized" });
       } else {
         console.log(decodeToken);
         next();
       }
     });
   } else {
-    res.redirect("/");
+    return res.status(401).json({ message: "Unauthorized" });
   }
 };
 
