@@ -18,14 +18,13 @@ const getArticles = async (req, res) => {
     try {
       const { title, content } = req.body;
       if (!title || !content) return res.status(400).send("Missing title or content");
-      else {
-        res.json(result.rows[0]);
+      else {  
         const result = await pool.query(
         "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'completed') RETURNING *",[title, content]);
         console.log(result.rows);
+        res.json(result.rows[0]);
         }
       console.log(req.originalUrl);
-     
       
     } catch (err) {
       console.error("Lỗi truy vấn:", err);

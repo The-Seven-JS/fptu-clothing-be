@@ -2,13 +2,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const createError = require("http-errors");
 const cors = require("cors");
-const usersRouter = require("./routes/articleRoutes");
+const usersRouter = require("./routes/article-route");
 const demoRouter = require("./routes/demo-routes");
 const logicRoute = require("./routes/logic-route");
+const photoRouter = require("./routes/photo-route");
+
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+// Add middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }))
+
 
 app.use(
   bodyParser.urlencoded({
@@ -27,6 +32,9 @@ app.get("/", (req, res) => {
 
 // Sử dụng router của articles.js
 app.use("/articles", usersRouter);
+
+// Sử dụng router của photos.js
+app.use("/photos", photoRouter);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {

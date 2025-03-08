@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const articleController = require("../controllers/articleController");
+const articleController = require("../controllers/article-controller");
 
 // Truy vấn tất cả articles
 router.get("/", articleController.getArticles);
