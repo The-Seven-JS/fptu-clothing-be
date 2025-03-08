@@ -6,21 +6,37 @@ const usersRouter = require("./routes/article-route");
 const demoRouter = require("./routes/demo-routes");
 const logicRoute = require("./routes/logic-route");
 const photoRouter = require("./routes/photo-route");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+const requireAuth = require("./middleware/authmiddleware");
+const pool = require("./config/db");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 // Add middleware to parse URL-encoded bodies
-app.use(express.urlencoded({ extended: true }))
-
-
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
 
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) console.error("Database connection error:", err);
+  else console.log("Connected to PostgreSQL at:", res.rows[0].now);
+});
+
+app.use("/login", loginRoute);
+app.use("/logout", logoutRoute);
 app.use("/api/demo", demoRouter);
 app.use("/", logicRoute);
 app.get("/", (req, res) => {
@@ -29,12 +45,11 @@ app.get("/", (req, res) => {
   });
 });
 
-
 // Sử dụng router của articles.js
-app.use("/articles", usersRouter);
+app.use("/articles", requireAuth, usersRouter);
 
 // Sử dụng router của photos.js
-app.use("/photos", photoRouter);
+app.use("/photos", requireAuth, photoRouter);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
