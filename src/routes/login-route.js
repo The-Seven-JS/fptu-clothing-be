@@ -2,7 +2,7 @@ const { Router } = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const pool = require("../../database/database");
+const pool = require("../config/db");
 const loginRoute = Router();
 
 const createToken = (name) => {
