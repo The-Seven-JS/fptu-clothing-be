@@ -18,6 +18,8 @@ const getArticles = async (req, res) => {
     try {
       const { title, content } = req.body;
       if (!title || !content) return res.status(400).send("Missing title or content");
+      if(typeof title !== "string" || typeof content !== "string") return res.status(400).send("title and content must be strings");
+      if(content.length === 0) return res.status(400).send("content should not be empty");
       else {  
         const result = await pool.query(
         "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'completed') RETURNING *",[title, content]);
@@ -36,9 +38,14 @@ const getArticles = async (req, res) => {
 const deleteArticle = async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [id]);
+        const numId = parseInt(id, 10);
+        if(isNaN(numId)){
+            return res.status(400).send("wrong id");
+        }
+        const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [numId]);
         console.log(req.originalUrl);
         console.log (result.rows);
+
         if (result.rowCount === 0)
             return res.status(404).send("Article not found");
         else
@@ -54,6 +61,26 @@ const updateArticle = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, content } = req.body;
+        const numId = parseInt(id, 10)
+        if(isNaN(numId)){
+            return res.status(400).send("wrong id");
+        }
+        if(!title || !content){
+            return res.status(400).send("Missing title or content");
+        }
+        if(typeof title !== "string" || typeof content !== "string"){
+            return res.status(400).send("title and content must be strings");
+        }
+
+        const checkExist = await pool.query("SELECT * FROM articles WHERE id = $1", [numId]);
+        if (checkExist.rowCount === 0) {
+            return res.status(404).json({ error: "article not found"});
+        }        
+
+
+
+
+
         const timestamp = new Date(Date.now()).toISOString();
         const result = await pool.query(    
             "UPDATE articles SET title = $1, content = $2, updated_at = $3 WHERE id = $4 RETURNING *",
