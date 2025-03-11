@@ -14,6 +14,8 @@ logicRoute.get("/attributes", (req, res) => {
   if (gender === "female") return res.json(attribute_data_female);
   return res.status(400).json({ error: "error" });
 });
+
+
 logicRoute.get("/advice", (req, res) => {
   // trang rieng chon thuoc tinh => ket qua
   const { gender, shape, skin, leg, bmi } = req.query;
@@ -21,11 +23,16 @@ logicRoute.get("/advice", (req, res) => {
     return res.status(400).json({ error: "missing attributes" });
   }
 
-  const id =
-    parseInt(shape) * 1000 +
-    parseInt(skin) * 100 +
-    parseInt(leg) * 10 +
-    parseInt(bmi);
+
+const numShape = parseInt(shape, 10);
+const numSkin = parseInt(skin, 10);
+const numLeg = parseInt(leg, 10);
+const numBmi = parseInt(bmi, 10);
+if ([numShape, numSkin, numLeg, numBmi].some(isNaN)) {
+    return res.status(400).json({ error: "attributes must be numbers" });
+}
+
+  const id = numShape * 1000 + numSkin * 100 + numLeg * 10 + numBmi;
   const advice_data = gender === "male" ? male_advice : female_advice;
   const advice = advice_data.find((item) => item.id === id);
 
