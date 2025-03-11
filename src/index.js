@@ -47,6 +47,8 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/admin", requireAuth, photoRouter);
+
 // Sử dụng router của articles.js
 app.use("/articles", requireAuth, usersRouter);
 
