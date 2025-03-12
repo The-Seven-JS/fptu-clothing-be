@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const logoutRouter = Router();
 
 logoutRouter.get("/", (req, res) => {
-  res.clearCookie("token", {
+  res.clearCookie("jwt", {
     httpOnly: true,
     sameSite: "Lax", // Use "Lax" for local testing; "Strict" for production
   });
