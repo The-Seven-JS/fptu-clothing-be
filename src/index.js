@@ -8,12 +8,14 @@ const logicRoute = require("./routes/logic-route");
 const photoRouter = require("./routes/photo-route");
 const loginRoute = require("./routes/login-route");
 const logoutRoute = require("./routes/logout-route");
+const changePassRoute = require("./routes/change-password-route");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const requireAuth = require("./middleware/authmiddleware");
 const pool = require("./config/db");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
@@ -23,7 +25,7 @@ app.use(
     credentials: true,
   })
 );
-// Add middleware to parse URL-encoded bodies
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
@@ -54,6 +56,8 @@ app.use("/articles", requireAuth, usersRouter);
 
 // Sử dụng router của photos.js
 app.use("/photos", requireAuth, photoRouter);
+// Router đổi mật khẩu
+app.use("/changepass", changePassRoute);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
