@@ -57,7 +57,7 @@ app.use("/articles", requireAuth, usersRouter);
 // Sử dụng router của photos.js
 app.use("/photos", requireAuth, photoRouter);
 // Router đổi mật khẩu
-app.use("/changepass", changePassRoute);
+app.use("/changepass", requireAuth, changePassRoute);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
