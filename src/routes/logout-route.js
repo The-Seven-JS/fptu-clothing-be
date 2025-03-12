@@ -5,8 +5,11 @@ const cookieParser = require("cookie-parser");
 const logoutRouter = Router();
 
 logoutRouter.get("/", (req, res) => {
-  res.clearCookie("jwt");
-  res.json({ message: "Logout successful" });
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "Lax", // Use "Lax" for local testing; "Strict" for production
+  });
+  res.status(200).json({ message: "Logout successful" });
 });
 
 module.exports = logoutRouter;
