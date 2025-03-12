@@ -49,7 +49,11 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/admin", requireAuth);
+app.get("/admin", requireAuth, (req, res) => {
+  res.status(200).json({
+    message: "success",
+  });
+});
 
 // Sử dụng router của articles.js
 app.use("/articles", requireAuth, usersRouter);
