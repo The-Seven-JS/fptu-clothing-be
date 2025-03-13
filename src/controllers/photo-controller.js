@@ -120,6 +120,7 @@ const addPhotoController = async (req, res) => {
 const deletePhotoController = async (req, res) => {
     try {
         const publicId = req.params.public_id;
+        const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
         console.log(publicId);
         result = await cloudinary.uploader.destroy(publicId);
         console.log(result);

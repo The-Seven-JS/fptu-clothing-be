@@ -9,9 +9,9 @@ router.get("/", articleController.getArticles);
   router.post("/new", articleController.addArticle);
 
   //Xoá một article
-  router.delete("/:id", articleController.deleteArticle);
+  router.delete("/:article_id", articleController.deleteArticle);
 
   //Chỉnh sửa một article
-  router.put("/:id", articleController.updateArticle);
+  router.put("/:article_id", articleController.updateArticle);
 
   module.exports = router

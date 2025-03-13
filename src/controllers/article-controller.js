@@ -1,4 +1,12 @@
 const pool = require("../config/db");
+const cloudinary = require("cloudinary").v2
+
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "your_cloud_name",
+    api_key: process.env.CLOUDINARY_API_KEY || "your_api_key",
+    api_secret: process.env.CLOUDINARY_API_SECRET || "your_api_secret",
+})
 
 // Truy vấn tất cả articles
 const getArticles = async (req, res) => {
@@ -35,10 +43,15 @@ const getArticles = async (req, res) => {
 //Xoá một article
 const deleteArticle = async (req, res) => {
     try {
-        const { id } = req.params;
-        const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [id]);
+        const { article_id } = req.params; // Nhờ Đăng validate thêm lỡ article_id không tồn tại
+        const result_image = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [article_id]);
+        console.log ("RESULT IMAGE: ",result_image);
+        await pool.query("DELETE FROM article_images WHERE article_id = $1", [article_id]); 
+        const delete_image = await cloudinary.api.delete_resources(result_image.rows.map(image => image.public_id));
+        console.log ("DELETE IMAGE: ", delete_image);
+        const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [article_id]);
         console.log(req.originalUrl);
-        console.log (result.rows);
+        console.log ("DELETE ARTICLE: ",result.rows);
         if (result.rowCount === 0)
             return res.status(404).send("Article not found");
         else
@@ -52,12 +65,12 @@ const deleteArticle = async (req, res) => {
 //Chỉnh sửa một article
 const updateArticle = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { article_id } = req.params;
         const { title, content } = req.body;
         const timestamp = new Date(Date.now()).toISOString();
         const result = await pool.query(    
             "UPDATE articles SET title = $1, content = $2, updated_at = $3 WHERE id = $4 RETURNING *",
-            [title, content, timestamp, id]
+            [title, content, timestamp, article_id]
         );
         console.log(req.originalUrl);
         console.log (result.rows);
