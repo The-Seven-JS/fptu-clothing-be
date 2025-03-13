@@ -138,8 +138,11 @@ const updatePhotoController = async (req, res) => {
     try {
             console.log(req.originalUrl);
             const publicId = req.params.public_id;
-            console.log(publicId);
+            const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
+            console.log("PUBLIC ID:", publicId);
+            console.log("ARTICLE ID:", article_id);
             const result1 = await cloudinary.uploader.destroy(publicId);
+        console.log ("RESULT 1: " , result1);
             if (result1.result === "not found") {
                 return res.status(404).send("File not found in Cloudinary");
             }
@@ -155,13 +158,14 @@ const updatePhotoController = async (req, res) => {
                      { public_id: publicId})
                  fs.unlinkSync(req.file.path);
     
-                console.log (result);
+                console.log ("RESULT: " ,result);
                 res.json({
                     message: "File updated successfully to Cloudinary",
                     url: result.secure_url,
-                    public_id: result.public_id
+                    public_id: result.public_id,
+                    article_id: article_id
                 })
-                await pool.query("INSERT INTO article_images (public_id) VALUES ($1)", [result.public_id])
+                await pool.query("INSERT INTO article_images (public_id, article_id) VALUES ($1, $2)", [result.public_id, article_id]);
             })
             
             
