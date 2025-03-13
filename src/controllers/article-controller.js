@@ -21,6 +21,22 @@ const getArticles = async (req, res) => {
     }
 };
 
+// Truy vấn 1 article
+const getArticle = async (req, res) => {
+    try {
+        const { article_id } = req.params; // Nhờ Đăng validate lỡ article_id khoong tồn tại
+        const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+        const result2 = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [article_id]);
+        console.log(req.originalUrl);
+        console.log(result.rows);
+        console.log (result2);
+        res.json({ article: result.rows[0], images: result2.rows });
+    } catch (err) {
+        console.error("Lỗi truy vấn:", err);
+        res.status(500).send("Lỗi server");
+    }
+};
+
  //Thêm một article mới
  const addArticle = async (req, res) => {
     try {
@@ -87,6 +103,7 @@ const updateArticle = async (req, res) => {
 
 module.exports = {
     getArticles,
+    getArticle,
     addArticle,
     deleteArticle,
     updateArticle

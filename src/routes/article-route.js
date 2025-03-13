@@ -5,6 +5,9 @@ const articleController = require("../controllers/article-controller");
 // Truy vấn tất cả articles
 router.get("/", articleController.getArticles);
 
+//Truy vấn 1 article
+router.get("/:article_id", articleController.getArticle);
+
 //Thêm một article mới
   router.post("/new", articleController.addArticle);
 
