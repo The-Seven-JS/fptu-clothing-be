@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const uniqueKey = ["title", "content"];
+const uniqueKey = ["title", "content"]; //key to check
 
 
 const validateRequestBody = (body, allowedKeys) => {
