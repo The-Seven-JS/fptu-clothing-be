@@ -75,7 +75,7 @@ const uploadToCloudinary = (file) => {
 
 const getURLController = async (req, res) => {
     try {
-        const publicId = req.body.public_id;
+        const publicId = req.query.public_id;
         console.log("PUBLIC ID:", publicId);
         const result = await cloudinary.api.resources_by_ids(publicId);
         console.log ("RESULT: " ,result)
