@@ -75,7 +75,7 @@ const uploadToCloudinary = (file) => {
 
 const getURLController = async (req, res) => {
     try {
-        const publicId = req.query.public_id;
+        const publicId = req.query.public_id; //Nhờ Đăng validate lỡ public_id không tồn tại
         console.log("PUBLIC ID:", publicId);
         const result = await cloudinary.api.resources_by_ids(publicId);
         console.log ("RESULT: " ,result)
