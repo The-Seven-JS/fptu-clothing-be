@@ -9,17 +9,14 @@ const photoRouter = require("./routes/photo-route");
 
 
 const app = express();
-app.use(express.json());
-app.use(cors());
+
 // Add middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }))
 
+app.use(express.json());
+app.use(cors());
 
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
+
 
 app.use("/api/demo", demoRouter);
 app.use("/", logicRoute);
@@ -27,6 +24,15 @@ app.get("/", (req, res) => {
   res.json({
     message: "welcome to our website",
   });
+});
+
+app.use((req, res, next) => {
+  console.log("Received request:");
+  console.log("Headers1:", req.headers);
+  console.log("Headers2:", req.headers["content-type"]);
+  console.log("Body:", req.body);
+  console.log ("FILES" ,req.files);
+  next();
 });
 
 
