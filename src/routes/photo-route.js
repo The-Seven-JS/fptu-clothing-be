@@ -36,10 +36,10 @@ router.use((err, req, res, next) => {
     }
     res.status(400).send(err.message)
 })
-//router.get("/", photoController.getAllImages); 
-// router.get("/:id", photoController.getPhoto);
-router.post("/upload-to-cloud", photoController.addPhotoController); // Upload to Cloudinary
-router.delete("/delete-image/:public_id", photoController.deletePhotoController); // Delete from Cloudinary
-router.put("/update-image/:public_id", photoController.updatePhotoController); // Update from Cloudinary
+//router.get("/", photoController.getAllPhotos); 
+router.get("/get-url", photoController.getURLController); //Get URL from public_id
+router.post("/upload-to-cloud/:article_id", photoController.upload.array("file"), photoController.addPhotoController); // Upload to Cloudinary
+router.delete("/delete-image/:article_id/:public_id", photoController.deletePhotoController); // Delete from Cloudinary
+router.put("/update-image/:article_id/:public_id", photoController.updatePhotoController); // Update from Cloudinary
 
 module.exports = router;

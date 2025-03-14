@@ -18,6 +18,7 @@ const pool = require("./config/db");
 const path = require("path");
 
 const app = express();
+<<<<<<< HEAD
 app.use(express.json());
 app.use(
   cors({
@@ -33,6 +34,16 @@ app.use(
     extended: true,
   })
 );
+=======
+
+// Add middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }))
+
+app.use(express.json());
+app.use(cors());
+
+
+>>>>>>> 5fe8e7f2d73395fb981135173312a869e5aa224c
 
 pool.query("SELECT NOW()", (err, res) => {
   if (err) console.error("Database connection error:", err);
@@ -49,11 +60,23 @@ app.get("/", (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 app.get("/admin", requireAuth, (req, res) => {
   res.status(200).json({
     message: "success",
   });
 });
+=======
+app.use((req, res, next) => {
+  console.log("Received request:");
+  console.log("Headers1:", req.headers);
+  console.log("Headers2:", req.headers["content-type"]);
+  console.log("Body:", req.body);
+  console.log ("FILES" ,req.files);
+  next();
+});
+
+>>>>>>> 5fe8e7f2d73395fb981135173312a869e5aa224c
 
 // Sử dụng router của articles.js
 app.use("/articles", requireAuth, usersRouter);

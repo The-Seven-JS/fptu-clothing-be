@@ -3,6 +3,8 @@ const multer = require("multer")
 const fs = require("fs")
 const cloudinary = require("cloudinary").v2
 const path = require("path")
+const { get } = require("http")
+const pool = require("../config/db");
 
 // Cloudinary configuration
 cloudinary.config({
@@ -71,40 +73,61 @@ const uploadToCloudinary = (file) => {
     })
 }
 
+const getURLController = async (req, res) => {
+    try {
+        const publicId = req.query.public_id; //Nhờ Đăng validate lỡ public_id không tồn tại
+        console.log("PUBLIC ID:", publicId);
+        const result = await cloudinary.api.resources_by_ids(publicId);
+        console.log ("RESULT: " ,result)
+        const urls = result.resources.map(resource => resource.secure_url);
+        res.json({
+            urls: urls
+        })
+    } catch (error) {
+        res.status(500).send(
+            "Error uploading to Cloudinary: " + error.message
+        )
+    }
+}
 
-const addPhotoController = (req, res) => {
-        upload.single("file")(req, res, async (err) => {
-            if (err) {
-                return res.status(400).send(err.message)
-            }
-            if (!req.file) {
+const addPhotoController = async (req, res) => {
+            const article_id = req.params.article_id; //nhờ Đăng validate thêm lỡ article_id không tồn tại
+            console.log("BODY:", req.body);
+            console.log ("FILES" ,req.files);
+            if (!req.files || req.files.length === 0) {
                 return res.status(400).send("No file uploaded.")
-            }
+            }   
             try {
-                const result = await uploadToCloudinary(req.file)
+                const result = await Promise.all(
+                    req.files.map(file => uploadToCloudinary(file))
+                );
                 res.json({
                     message: "File uploaded successfully to Cloudinary",
-                    url: result.secure_url,
-                    public_id: result.public_id,
+                    public_id: result.map(file => file.public_id),
+                    url: result.map(file => file.secure_url),
+                    article_id: article_id
                 })
-                console.log (result);
+        
+                 await Promise.all(result.map(file => {pool.query("INSERT INTO article_images (public_id, article_id) VALUES ($1, $2)", [file.public_id, article_id])}));
+                console.log ("RESULT" , result);
             } catch (error) {
                 res.status(500).send(
                     "Error uploading to Cloudinary: " + error.message
                 )
             }
-        })
 }
 
 const deletePhotoController = async (req, res) => {
     try {
         const publicId = req.params.public_id;
+        const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
         console.log(publicId);
         result = await cloudinary.uploader.destroy(publicId);
         console.log(result);
         if (result.result === "not found") {
             return res.status(404).send("File not found in Cloudinary");
         }
+        await pool.query("DELETE FROM article_images WHERE public_id = $1", [publicId]);
         return res.json({ message: "File deleted successfully from Cloudinary" });
     } catch (error) {
         res.status(500).send("Error deleting from Cloudinary: " + error.message);
@@ -115,11 +138,15 @@ const updatePhotoController = async (req, res) => {
     try {
             console.log(req.originalUrl);
             const publicId = req.params.public_id;
-            console.log(publicId);
+            const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
+            console.log("PUBLIC ID:", publicId);
+            console.log("ARTICLE ID:", article_id);
             const result1 = await cloudinary.uploader.destroy(publicId);
+        console.log ("RESULT 1: " , result1);
             if (result1.result === "not found") {
                 return res.status(404).send("File not found in Cloudinary");
             }
+            await pool.query("DELETE FROM article_images WHERE public_id = $1", [publicId]);
             upload.single("file")(req, res, async (err) => {
                 if (err) {
                     return res.status(400).send(err.message)
@@ -131,12 +158,14 @@ const updatePhotoController = async (req, res) => {
                      { public_id: publicId})
                  fs.unlinkSync(req.file.path);
     
-                console.log (result);
+                console.log ("RESULT: " ,result);
                 res.json({
                     message: "File updated successfully to Cloudinary",
                     url: result.secure_url,
-                    public_id: result.public_id
+                    public_id: result.public_id,
+                    article_id: article_id
                 })
+                await pool.query("INSERT INTO article_images (public_id, article_id) VALUES ($1, $2)", [result.public_id, article_id]);
             })
             
             
@@ -146,7 +175,9 @@ const updatePhotoController = async (req, res) => {
 }
 
 module.exports = {
+    getURLController,
     addPhotoController,
     deletePhotoController,
-    updatePhotoController
+    updatePhotoController,
+    upload
 }
