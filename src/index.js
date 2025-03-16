@@ -6,6 +6,7 @@ const usersRouter = require("./routes/article-route");
 const demoRouter = require("./routes/demo-routes");
 const logicRoute = require("./routes/logic-route");
 const photoRouter = require("./routes/photo-route");
+require('dotenv').config();
 
 
 const app = express();
