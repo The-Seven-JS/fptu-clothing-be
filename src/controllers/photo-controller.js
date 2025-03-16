@@ -65,8 +65,14 @@ if (!fs.existsSync("uploads")) {
 const uploadToCloudinary = (file) => {
     return new Promise((resolve, reject) => {
          cloudinary.uploader.upload(file.path, (error, result) => {
-            if (error) reject(error)
-            else resolve(result)
+            if (error) {
+                console.error("Error uploading to Cloudinary:", error)
+                reject(error)
+            } 
+            else {  
+                console.log ("RESULT: " ,result);
+                resolve(result)
+            }
             // Remove local file after upload
             fs.unlinkSync(file.path)
         })
