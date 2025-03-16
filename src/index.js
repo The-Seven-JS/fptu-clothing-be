@@ -32,6 +32,7 @@ app.use((req, res, next) => {
   console.log("Headers2:", req.headers["content-type"]);
   console.log("Body:", req.body);
   console.log ("FILES" ,req.files);
+  console.log("CLOUDINARY_API_KEY:", process.env.CLOUDINARY_API_KEY);
   next();
 });
 
