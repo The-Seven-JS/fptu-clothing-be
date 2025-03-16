@@ -23,7 +23,9 @@ jobs:
 
             - name: Build Docker Image
               run: |
-                  docker build --target production -t ${{ vars.SERVICE_NAME }}:latest .
+                  docker build --target production \
+                   --build-arg CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
+                    -t ${{ vars.SERVICE_NAME }}:latest .
 
             - name: Log in to Docker Hub
               uses: docker/login-action@v1
