@@ -81,7 +81,7 @@ const uploadToCloudinary = (file) => {
 
 const getURLController = async (req, res) => {
     try {
-        const publicId = req.query.public_id; //Nhờ Đăng validate lỡ public_id không tồn tại
+        const publicId = req.query.public_id; //Nhờ Tus validate lỡ public_id không tồn tại
         console.log("PUBLIC ID:", publicId);
         const result = await cloudinary.api.resources_by_ids(publicId);
         console.log ("RESULT: " ,result)
@@ -97,7 +97,7 @@ const getURLController = async (req, res) => {
 }
 
 const addPhotoController = async (req, res) => {
-            const article_id = req.params.article_id; //nhờ Đăng validate thêm lỡ article_id không tồn tại
+            const article_id = req.params.article_id; //nhờ Tus validate thêm lỡ article_id không tồn tại
             console.log("BODY:", req.body);
             console.log ("FILES" ,req.files);
             if (!req.files || req.files.length === 0) {
@@ -126,7 +126,7 @@ const addPhotoController = async (req, res) => {
 const deletePhotoController = async (req, res) => {
     try {
         const publicId = req.params.public_id;
-        const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
+        const article_id = req.params.article_id; //Nhờ Tus validate thêm lỡ article_id không tồn tại
         console.log(publicId);
         result = await cloudinary.uploader.destroy(publicId);
         console.log(result);
@@ -144,7 +144,7 @@ const updatePhotoController = async (req, res) => {
     try {
             console.log(req.originalUrl);
             const publicId = req.params.public_id;
-            const article_id = req.params.article_id; //Nhờ Đăng validate thêm lỡ article_id không tồn tại
+            const article_id = req.params.article_id; //Nhờ Tus validate thêm lỡ article_id không tồn tại
             console.log("PUBLIC ID:", publicId);
             console.log("ARTICLE ID:", article_id);
             const result1 = await cloudinary.uploader.destroy(publicId);
