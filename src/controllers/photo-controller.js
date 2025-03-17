@@ -81,14 +81,18 @@ const uploadToCloudinary = (file) => {
 
 const getURLController = async (req, res) => {
     try {
-        const publicId = req.query.public_id; //Nhờ Tus validate lỡ public_id không tồn tại
+        const publicId = req.query.public_id;
         console.log("PUBLIC ID:", publicId);
         const result = await cloudinary.api.resources_by_ids(publicId);
         console.log ("RESULT: " ,result)
-        const urls = result.resources.map(resource => resource.secure_url);
-        res.json({
-            urls: urls
-        })
+        const check = result.resources.length === publicId.length ? true : false
+        if (!check) {
+            return res.status(404).send("Some files are  not found in Cloudinary");
+        }
+           const urls = result.resources.map(resource => resource.secure_url);
+          res.json({
+                urls: urls
+            }) 
     } catch (error) {
         res.status(500).send(
             "Error uploading to Cloudinary: " + error.message
@@ -97,7 +101,11 @@ const getURLController = async (req, res) => {
 }
 
 const addPhotoController = async (req, res) => {
-            const article_id = req.params.article_id; //nhờ Tus validate thêm lỡ article_id không tồn tại
+            const article_id = req.params.article_id; //Sao không có ảnh nó load lâu vậy
+            const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+            if (result.rows.length === 0) {
+                return res.status(404).send("Article not found");
+            }
             console.log("BODY:", req.body);
             console.log ("FILES" ,req.files);
             if (!req.files || req.files.length === 0) {
@@ -125,8 +133,12 @@ const addPhotoController = async (req, res) => {
 
 const deletePhotoController = async (req, res) => {
     try {
-        const publicId = req.params.public_id;
-        const article_id = req.params.article_id; //Nhờ Tus validate thêm lỡ article_id không tồn tại
+        const publicId = req.params.public_id; //Validate xem public_id có tương xứng với article_id không
+        const article_id = req.params.article_id;
+        const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+        if (result1.rows.length === 0) {
+            return res.status(404).send("Article not found");
+        }
         console.log(publicId);
         result = await cloudinary.uploader.destroy(publicId);
         console.log(result);
@@ -144,11 +156,15 @@ const updatePhotoController = async (req, res) => {
     try {
             console.log(req.originalUrl);
             const publicId = req.params.public_id;
-            const article_id = req.params.article_id; //Nhờ Tus validate thêm lỡ article_id không tồn tại
+            const article_id = req.params.article_id;
             console.log("PUBLIC ID:", publicId);
+            const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+            if (result.rows.length === 0) {
+                return res.status(404).send("Article not found");
+            }
             console.log("ARTICLE ID:", article_id);
             const result1 = await cloudinary.uploader.destroy(publicId);
-        console.log ("RESULT 1: " , result1);
+            console.log ("RESULT 1: " , result1);
             if (result1.result === "not found") {
                 return res.status(404).send("File not found in Cloudinary");
             }

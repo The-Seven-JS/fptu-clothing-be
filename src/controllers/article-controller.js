@@ -39,8 +39,11 @@ const getArticles = async (req, res) => {
 // Truy vấn 1 article
 const getArticle = async (req, res) => {
     try {
-        const { article_id } = req.params; // Nhờ Tus validate lỡ article_id khoong tồn tại
+        const { article_id } = req.params;
         const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+        if (result.rows.length === 0) {
+            return res.status(404).send("Article not found");
+        }
         const result2 = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [article_id]);
         console.log(req.originalUrl);
         console.log(result.rows);
@@ -71,7 +74,7 @@ const addArticle = async (req, res) => {
 //Xoá một article
 const deleteArticle = async (req, res) => {
     try {
-        const { article_id } = req.params; // Nhờ Tus validate thêm lỡ article_id không tồn tại   
+        const { article_id } = req.params; 
         console.log(req.originalUrl);
         const numId = parseInt(article_id, 10);
         if (isNaN(numId) || numId < 0) {
@@ -139,10 +142,7 @@ const updateArticle = async (req, res) => {
         console.log(result.rows);
         const result1 = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE id = $1", [numId]);
         console.log(result1.rows);
-        if (result.rowCount === 0)
-            return res.status(404).send("Article not found");
-        else
-            res.json({ message: "Article updated successfully", updatedArticle: result1.rows[0] });
+        res.json({ message: "Article updated successfully", updatedArticle: result1.rows[0] });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
