@@ -55,13 +55,11 @@ const getArticle = async (req, res) => {
 //Thêm một article mới - 1 draft, không có gì cả để updateArticle sau. (KHÔNG CÓ VLD)
 const addArticle = async (req, res) => {
     try {
-        const { title, content } = req.body;
-
-
         const result = await pool.query("INSERT INTO articles (title, content, status) VALUES ($1, $2, 'draft') RETURNING *", ["New Post", "<p></p>"]);
         console.log(result.rows);
-        res.json(result.rows[0]);
-        
+        const result1 = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, updated_at FROM articles WHERE id = $1", [result.rows[0].id]);
+        console.log(result1.rows);
+        res.json(result1.rows[0]);
         console.log(req.originalUrl);
 
     } catch (err) {
@@ -133,17 +131,18 @@ const updateArticle = async (req, res) => {
             }
         
 
-        const timestamp = new Date(Date.now()).toISOString();
         const result = await pool.query(
-            "UPDATE articles SET title = $1, content = $2, updated_at = $3 WHERE id = $4 RETURNING *",
-            [title, content, timestamp, numId]
+            "UPDATE articles SET title = $1, content = $2, status = 'completed', updated_at = NOW() WHERE id = $3 RETURNING *",
+            [title, content, numId]
         );
         console.log(req.originalUrl);
         console.log(result.rows);
+        const result1 = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE id = $1", [numId]);
+        console.log(result1.rows);
         if (result.rowCount === 0)
             return res.status(404).send("Article not found");
         else
-            res.json({ message: "Article updated successfully", updatedArticle: result.rows[0] });
+            res.json({ message: "Article updated successfully", updatedArticle: result1.rows[0] });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
