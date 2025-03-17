@@ -119,16 +119,16 @@ const updateArticle = async (req, res) => {
             return res.status(404).json({ error: "article not found" });
         }
 
-        if (title === undefined || content === undefined) {
-            return res.status(400).send("Missing title or content");
+        if (title === "" || content === "<p></p>") {
+            return res.status(400).send("title and content cannot be empty");
         }
         if (typeof title !== "string" || typeof content !== "string") {
             return res.status(400).send("title and content must be strings");
         }
 
-            if (content.trim() === "") {
-                return res.status(400).send("Content should not be empty");
-            }
+         if (content.trim() === "<p></p>") {
+            return res.status(400).send("Content should not be empty");
+        }
         
 
         const result = await pool.query(
