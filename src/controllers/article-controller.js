@@ -44,7 +44,7 @@ const getArticle = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const result2 = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [article_id]);
+        const result2 = await pool.query("SELECT public_id, url FROM article_images WHERE article_id = $1", [article_id]);
         console.log(req.originalUrl);
         console.log(result.rows);
         console.log (result2);

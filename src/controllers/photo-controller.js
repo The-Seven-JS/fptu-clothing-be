@@ -122,7 +122,7 @@ const addPhotoController = async (req, res) => {
                     article_id: article_id
                 })
         
-                 await Promise.all(result.map(file => {pool.query("INSERT INTO article_images (public_id, article_id) VALUES ($1, $2)", [file.public_id, article_id])}));
+                 await Promise.all(result.map(file => {pool.query("INSERT INTO article_images (public_id, article_id, url) VALUES ($1, $2, $3)", [file.public_id, article_id, file.secure_url])}));
                 console.log ("RESULT" , result);
             } catch (error) {
                 res.status(500).send(
