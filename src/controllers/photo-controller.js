@@ -16,10 +16,7 @@ cloudinary.config({
 // Constants for file validation
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_EXTENSIONS = [
-    ".pdf",
-    ".doc",
-    ".docx",
-    ".txt",
+    ".webp",
     ".jpg",
     ".jpeg",
     ".png",
@@ -101,9 +98,10 @@ const getURLController = async (req, res) => {
 }
 
 const addPhotoController = async (req, res) => {
+    try {
             const article_id = req.params.article_id; //Sao không có ảnh nó load lâu vậy
-            const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
-            if (result.rows.length === 0) {
+            const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+            if (result1.rows.length === 0) {
                 return res.status(404).send("Article not found");
             }
             console.log("BODY:", req.body);
@@ -111,8 +109,7 @@ const addPhotoController = async (req, res) => {
             if (!req.files || req.files.length === 0) {
                 return res.status(400).send("No file uploaded.")
             }   
-            try {
-                const result = await Promise.all(
+             const result = await Promise.all(
                     req.files.map(file => uploadToCloudinary(file))
                 );
                 res.json({
