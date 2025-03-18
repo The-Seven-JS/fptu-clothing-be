@@ -122,7 +122,7 @@ const updateArticle = async (req, res) => {
             return res.status(404).json({ error: "article not found" });
         }
     
-        if (title === "" || content.search('<p></p>') !== -1 || content.search('</h1>') === -1 || content.search('</h2>') === -1) {
+        if (title === ""  || content.search('</h1>') === -1 || content.search('<h1></h1>') !== -1 || content.search('</h2>') === -1 || content.search('<h2 data-level="2"></h2>') !== -1) {
             return res.status(400).send("title and content cannot be empty");
         }
         if (typeof title !== "string" || typeof content !== "string") {
