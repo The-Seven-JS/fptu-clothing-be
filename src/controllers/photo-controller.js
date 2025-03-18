@@ -133,13 +133,20 @@ const addPhotoController = async (req, res) => {
 
 const deletePhotoController = async (req, res) => {
     try {
-        const publicId = req.params.public_id; //Validate xem public_id có tương xứng với article_id không
+        const publicId = req.params.public_id;
         const article_id = req.params.article_id;
         const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+        console.log ("RESULT 1: " , result1);
         if (result1.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
         console.log(publicId);
+        console.log("PUBLIC ID:", publicId);
+        const result2 = await pool.query("SELECT * FROM article_images WHERE public_id = $1", [publicId]);
+        console.log ("RESULT 2: " , result2);
+        if (result2.rows[0].article_id !== parseInt(article_id)) {
+            return res.status(404).send("Conflict between public_id and article_id");
+        }
         result = await cloudinary.uploader.destroy(publicId);
         console.log(result);
         if (result.result === "not found") {
