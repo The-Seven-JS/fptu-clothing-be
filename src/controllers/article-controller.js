@@ -28,7 +28,7 @@ const getArticles = async (req, res) => {
     try {
         const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count FROM articles");
         console.log(req.originalUrl);
-        console.log(result.rows); 5
+        console.log(result.rows);
         res.json(result.rows);
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
