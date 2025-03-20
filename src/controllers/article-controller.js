@@ -126,7 +126,7 @@ const updateArticle = async (req, res) => {
         }
     
         if (title === ""  || content.search('</h1>') === -1 || content.search('<h1></h1>') !== -1 || content.search('</h2>') === -1 || content.search('<h2 data-level="2"></h2>') !== -1) {
-            return res.status(400).send("title and content must have heading, summary");
+            return res.status(400).send("title should not be empty and content must have heading, summary");
         }
         if (typeof title !== "string" || typeof content !== "string") {
             return res.status(400).send("title and content must be strings");
