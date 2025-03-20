@@ -87,7 +87,7 @@ const getURLController = async (req, res) => {
             return res.status(404).send("Some files are  not found in Cloudinary");
         }
            const urls = result.resources.map(resource => resource.secure_url);
-          res.json({
+          res.status(200).json({
                 urls: urls
             }) 
     } catch (error) {
@@ -99,7 +99,7 @@ const getURLController = async (req, res) => {
 
 const addPhotoController = async (req, res) => {
     try {
-            const article_id = req.params.article_id; //Sao không có ảnh nó load lâu vậy
+            const article_id = req.params.article_id;
             const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
             if (result1.rows.length === 0) {
                 return res.status(404).send("Article not found");
@@ -112,13 +112,12 @@ const addPhotoController = async (req, res) => {
              const result = await Promise.all(
                     req.files.map(file => uploadToCloudinary(file))
                 );
-                res.json({
-                    message: "File uploaded successfully to Cloudinary",
-                    public_id: result.map(file => file.public_id),
-                    url: result.map(file => file.secure_url),
-                    article_id: article_id
-                })
-        
+            res.status(201).json({
+                  message: "File uploaded successfully to Cloudinary",
+                 public_id: result.map(file => file.public_id),
+                 url: result.map(file => file.secure_url),
+                  article_id: article_id
+            })       
                  await Promise.all(result.map(file => {pool.query("INSERT INTO article_images (public_id, article_id, url) VALUES ($1, $2, $3)", [file.public_id, article_id, file.secure_url])}));
                 console.log ("RESULT" , result);
             } catch (error) {
@@ -150,7 +149,7 @@ const deletePhotoController = async (req, res) => {
             return res.status(404).send("File not found in Cloudinary");
         }
         await pool.query("DELETE FROM article_images WHERE public_id = $1", [publicId]);
-        return res.json({ message: "File deleted successfully from Cloudinary" });
+        return res.status(200).json({ message: "File deleted successfully from Cloudinary" });
     } catch (error) {
         res.status(500).send("Error deleting from Cloudinary: " + error.message);
     }
@@ -185,7 +184,7 @@ const updatePhotoController = async (req, res) => {
                  fs.unlinkSync(req.file.path);
     
                 console.log ("RESULT: " ,result);
-                res.json({
+                res.status(200).json({
                     message: "File updated successfully to Cloudinary",
                     url: result.secure_url,
                     public_id: result.public_id,

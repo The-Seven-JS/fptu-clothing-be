@@ -1,11 +1,11 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const createError = require("http-errors");
 const cors = require("cors");
-const usersRouter = require("./routes/article-route");
+const articleRouter = require("./routes/article-route");
 const demoRouter = require("./routes/demo-routes");
 const logicRoute = require("./routes/logic-route");
 const photoRouter = require("./routes/photo-route");
+const commentRouter = require("./routes/comment-route");
 require('dotenv').config();
 
 
@@ -39,10 +39,13 @@ app.use((req, res, next) => {
 
 
 // Sử dụng router của articles.js
-app.use("/articles", usersRouter);
+app.use("/articles", articleRouter);
 
 // Sử dụng router của photos.js
 app.use("/photos", photoRouter);
+
+//Sử dụng router của comments.js
+app.use("/comments", commentRouter);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
