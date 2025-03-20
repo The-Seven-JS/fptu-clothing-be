@@ -27,9 +27,12 @@ const validateRequestBody = (body, allowedKeys) => {
 const getArticles = async (req, res) => {
     try {
         const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count FROM articles");
+        if (result.rows.length === 0) {
+            return res.status(404).send("Articles not found");
+        }
         console.log(req.originalUrl);
         console.log(result.rows);
-        res.json(result.rows);
+        res.status(200).json(result.rows);
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -48,7 +51,7 @@ const getArticle = async (req, res) => {
         console.log(req.originalUrl);
         console.log(result.rows);
         console.log (result2);
-        res.json({ article: result.rows[0], images: result2.rows });
+        res.status(200).json({ article: result.rows[0], images: result2.rows });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -62,7 +65,7 @@ const addArticle = async (req, res) => {
         console.log(result.rows);
         const result1 = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, updated_at FROM articles WHERE id = $1", [result.rows[0].id]);
         console.log(result1.rows);
-        res.json(result1.rows[0]);
+        res.status(201).json(result1.rows[0]);
         console.log(req.originalUrl);
 
     } catch (err) {
@@ -96,7 +99,7 @@ const deleteArticle = async (req, res) => {
         if (result.rowCount === 0)
             return res.status(404).send("Article not found");
         else
-            res.json({ message: "Article deleted successfully", deletedArticle: result.rows[0] });
+            res.status(200).json({ message: "Article deleted successfully", deletedArticle: result.rows[0] });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -123,7 +126,7 @@ const updateArticle = async (req, res) => {
         }
     
         if (title === ""  || content.search('</h1>') === -1 || content.search('<h1></h1>') !== -1 || content.search('</h2>') === -1 || content.search('<h2 data-level="2"></h2>') !== -1) {
-            return res.status(400).send("title and content cannot be empty");
+            return res.status(400).send("title and content must have heading, summary");
         }
         if (typeof title !== "string" || typeof content !== "string") {
             return res.status(400).send("title and content must be strings");
@@ -142,7 +145,7 @@ const updateArticle = async (req, res) => {
         console.log(result.rows);
         const result1 = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE id = $1", [numId]);
         console.log(result1.rows);
-        res.json({ message: "Article updated successfully", updatedArticle: result1.rows[0] });
+        res.status(200).json({ message: "Article updated successfully", updatedArticle: result1.rows[0] });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
