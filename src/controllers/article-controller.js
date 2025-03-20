@@ -131,6 +131,9 @@ const updateArticle = async (req, res) => {
         if (typeof title !== "string" || typeof content !== "string") {
             return res.status(400).send("title and content must be strings");
         }
+        if (title === undefined || content === undefined) {
+            return res.status(400).send("title and content must be defined");
+        }
 
          if (content.trim() === "<p></p>") {
             return res.status(400).send("Content should not be empty");
