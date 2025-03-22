@@ -1,1 +1,1 @@
-aNH qUÝ âm điểm
+aNH qUÝ âm vô cực điểm

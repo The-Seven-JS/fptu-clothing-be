@@ -1,8 +1,7 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const createError = require("http-errors");
 const cors = require("cors");
-const usersRouter = require("./routes/article-route");
+const articleRouter = require("./routes/article-route");
 const demoRouter = require("./routes/demo-routes");
 const logicRoute = require("./routes/logic-route");
 const photoRouter = require("./routes/photo-route");
@@ -16,6 +15,8 @@ const cookieParser = require("cookie-parser");
 const requireAuth = require("./middleware/authmiddleware");
 const pool = require("./config/db");
 const path = require("path");
+const commentRouter = require("./routes/comment-route");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
@@ -65,12 +66,15 @@ app.use((req, res, next) => {
 });
 
 // Sử dụng router của articles.js
-app.use("/articles", requireAuth, usersRouter);
+app.use("/articles", articleRouter);
 
 // Sử dụng router của photos.js
 app.use("/photos", requireAuth, photoRouter);
 // Router đổi mật khẩu
 app.use("/changepass", requireAuth, changePassRoute);
+
+//Sử dụng router của comments.js
+app.use("/comments", commentRouter);
 
 //Middleware xử lý lỗi 404
 app.use(function (req, res, next) {
