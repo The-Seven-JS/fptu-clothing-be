@@ -26,7 +26,7 @@ const validateRequestBody = (body, allowedKeys) => {
 // Truy vấn tất cả articles
 const getArticles = async (req, res) => {
     try {
-        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count FROM articles");
+        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count, (SELECT COUNT(*) FROM comments WHERE article_id = articles.id) AS comment_count FROM articles");
         if (result.rows.length === 0) {
             return res.status(404).send("Articles not found");
         }
@@ -43,15 +43,17 @@ const getArticles = async (req, res) => {
 const getArticle = async (req, res) => {
     try {
         const { article_id } = req.params;
-        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count FROM articles WHERE id = $1", [article_id]);
+        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count, (SELECT COUNT(*) FROM comments WHERE article_id = articles.id) AS comment_count FROM articles WHERE id = $1", [article_id]);
         if (result.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const result2 = await pool.query("SELECT public_id, url FROM article_images WHERE article_id = $1", [article_id]);
+        const result2 = await pool.query("SELECT public_id, url, article_id FROM article_images WHERE article_id = $1", [article_id]);
+        const result3 = await pool.query("SELECT comment_id, username, content, email, created_at, article_id FROM comments WHERE article_id = $1", [article_id]);
         console.log(req.originalUrl);
-        console.log(result.rows);
-        console.log (result2);
-        res.status(200).json({ article: result.rows[0], images: result2.rows });
+        console.log("ARTICLE", result.rows);
+        console.log ("IMAGES", result2);
+        console.log ("COMMENTS", result3);
+        res.status(200).json({ article: result.rows[0], images: result2.rows , comments: result3.rows });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -93,6 +95,15 @@ const deleteArticle = async (req, res) => {
             await pool.query("DELETE FROM article_images WHERE article_id = $1", [numId]); 
             const delete_image = await cloudinary.api.delete_resources(result_image.rows.map(image => image.public_id));
             console.log ("DELETE IMAGE: ", delete_image);
+        }
+        const result_comment = await pool.query("SELECT comment_id FROM comments WHERE article_id = $1", [numId]);
+        console.log ("RESULT COMMENT: ",result_comment);
+        if (result_comment.rows.length === 0) {
+            console.log ("NO COMMENT");
+        }
+        else {
+            const result_delete_comment = await pool.query("DELETE FROM comments WHERE article_id = $1", [numId]);
+            console.log ("DELETE COMMENT: ",result_delete_comment);
         }
         const result = await pool.query("DELETE FROM articles WHERE id = $1 RETURNING *", [numId]);
         console.log ("DELETE ARTICLE: ",result.rows);
