@@ -117,6 +117,22 @@ const deleteArticle = async (req, res) => {
     }
 };
 
+//Xoá một article draft
+const deleteDraft = async (req, res) => {
+    try {
+        console.log(req.originalUrl);
+        const result = await pool.query("DELETE FROM articles WHERE status = 'draft' RETURNING *");
+        console.log ("DELETE ARTICLE DRAFT: ",result.rows);
+        if (result.rowCount === 0)
+            return res.status(404).send("Article not found");
+        else
+            res.status(200).json({ message: "Article draft deleted successfully", deletedArticleDraft: result.rows[0] });
+    } catch (err) {
+        console.error("Lỗi truy vấn:", err);
+        res.status(500).send("Lỗi server");
+    }
+};
+
 //Chỉnh sửa một article - tu them bai viet rong roi edit nen khong vld missing title/content 
 const updateArticle = async (req, res) => {
     try {
@@ -172,5 +188,6 @@ module.exports = {
     getArticle,
     addArticle,
     deleteArticle,
+    deleteDraft,
     updateArticle
 };
