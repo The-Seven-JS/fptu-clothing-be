@@ -15,6 +15,7 @@ const cookieParser = require("cookie-parser");
 const requireAuth = require("./middleware/authmiddleware");
 const pool = require("./config/db");
 const path = require("path");
+const bodyParser = require("body-parser");
 const commentRouter = require("./routes/comment-route");
 require("dotenv").config();
 
