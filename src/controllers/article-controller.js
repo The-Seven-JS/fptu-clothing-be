@@ -26,7 +26,7 @@ const validateRequestBody = (body, allowedKeys) => {
 // Truy vấn tất cả articles
 const getArticles = async (req, res) => {
     try {
-        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count, (SELECT COUNT(*) FROM comments WHERE article_id = articles.id) AS comment_count FROM articles");
+        const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at, (SELECT COUNT(*) FROM article_images WHERE article_id = articles.id) AS image_count, (SELECT COUNT(*) FROM comments WHERE article_id = articles.id) AS comment_count FROM articles WHERE status = 'completed'");
         if (result.rows.length === 0) {
             return res.status(404).send("Articles not found");
         }
