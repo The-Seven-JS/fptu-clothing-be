@@ -12,7 +12,7 @@ const articleController = require("../controllers/article-controller");
   router.post("/new", articleController.addArticle);
 
 //Xoá một article
-  router.delete("/:article_id", articleController.deleteArticle);
+  router.delete("/delete-article/:article_id", articleController.deleteArticle);
 
 // Xoá một article draft
   router.delete("/delete-draft", articleController.deleteDraft);
