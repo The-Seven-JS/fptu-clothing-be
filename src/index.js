@@ -61,11 +61,7 @@ app.use((req, res, next) => {
   console.log("Headers1:", req.headers);
   console.log("Headers2:", req.headers["content-type"]);
   console.log("Body:", req.body);
-<<<<<<< HEAD
   console.log("FILES", req.files);
-=======
-  console.log ("FILES" ,req.files);
->>>>>>> 099670ad3da23f451b668bb6684f340ddcb07a23
   next();
 });
 
