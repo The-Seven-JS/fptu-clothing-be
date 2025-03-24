@@ -19,8 +19,8 @@ router.delete(
   articleController.deleteArticle
 );
 
-// Xoá một article draft
-router.delete("/delete-draft", requireAuth, articleController.deleteDraft);
+// Xoá tất cả article draft
+router.delete("/delete-drafts", requireAuth, articleController.deleteDrafts);
 
 //Chỉnh sửa một article
 router.put("/:article_id", requireAuth, articleController.updateArticle);
