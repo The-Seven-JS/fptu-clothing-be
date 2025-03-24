@@ -117,19 +117,19 @@ const deleteArticle = async (req, res) => {
     }
 };
 
-//Xoá một article draft
-const deleteDraft = async (req, res) => {
+//Xoá tất cả article draft
+const deleteDrafts = async (req, res) => {
     try {
         console.log(req.originalUrl);
-        const result_article_id = await pool.query("SELECT id FROM articles WHERE status = 'draft' LIMIT 1");
+        const result_article_id = await pool.query("SELECT id FROM articles WHERE status = 'draft'");
         console.log ("ARTICLE ID: ", result_article_id);
-        const result_image = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [result_article_id.rows[0].id]);
+        const result_image = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [result_article_id.map(image => image.id)]);
         console.log ("RESULT IMAGE: ",result_image);
         if (result_image.rows.length === 0) {
            console.log ("NO IMAGE");
         }
         else {
-            await pool.query("DELETE FROM article_images WHERE article_id = $1", [result_article_id.rows[0].id]); 
+            await pool.query("DELETE FROM article_images WHERE article_id = $1", [result_article_id.map(image => image.id)]); 
             const delete_image = await cloudinary.api.delete_resources(result_image.rows.map(image => image.public_id));
             console.log ("DELETE IMAGE: ", delete_image);
         }
@@ -138,7 +138,7 @@ const deleteDraft = async (req, res) => {
         if (result.rowCount === 0)
             return res.status(404).send("Article not found");
         else
-            res.status(200).json({ message: "Article draft deleted successfully", deletedArticleDraft: result.rows[0] });
+            res.status(200).json({ message: "Article draft deleted successfully", deletedArticleDraft: result.rows });
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -200,6 +200,6 @@ module.exports = {
     getArticle,
     addArticle,
     deleteArticle,
-    deleteDraft,
+    deleteDrafts,
     updateArticle
 };
