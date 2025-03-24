@@ -55,7 +55,7 @@ const addComment = async (req, res) => {
             return res.status(400).send("username and content must be defined");
         }
 
-         if (username.trim() === "<p></p>" || content.trim() === "<p></p>") {
+         if (username.trim() === "" || content.trim() === "") {
             return res.status(400).send("Usrname and content should not be empty");
         }
         const email = req.body.email;
