@@ -35,6 +35,7 @@ loginRoute.post("/", async (req, res) => {
     });
     res.json({ message: "Login successful" });
   } catch (err) {
+    console.log (err);
     res.status(500).json({ error: "User login failed" });
   }
 });
