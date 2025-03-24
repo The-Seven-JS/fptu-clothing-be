@@ -48,6 +48,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/admin", requireAuth, (req, res) => {
+  console.log(req.cookies);
   res.status(200).json({
     message: "success",
   });
