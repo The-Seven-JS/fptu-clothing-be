@@ -139,13 +139,13 @@ const deleteDrafts = async (req, res) => {
         console.log(req.originalUrl);
         const result_article_id = await pool.query("SELECT id FROM articles WHERE status = 'draft'");
         console.log ("ARTICLE ID: ", result_article_id);
-        const result_image = await pool.query("SELECT public_id FROM article_images WHERE article_id = $1", [result_article_id.map(image => image.id)]);
+        const result_image = await pool.query("SELECT public_id FROM article_images WHERE article_id = ANY($1)", [result_article_id.rows.map(article => article.id)]);
         console.log ("RESULT IMAGE: ",result_image);
         if (result_image.rows.length === 0) {
            console.log ("NO IMAGE");
         }
         else {
-            await pool.query("DELETE FROM article_images WHERE article_id = $1", [result_article_id.map(image => image.id)]); 
+            await pool.query("DELETE FROM article_images WHERE article_id = ANY($1)", [result_article_id.rows.map(article => article.id)]); 
             const delete_image = await cloudinary.api.delete_resources(result_image.rows.map(image => image.public_id));
             console.log ("DELETE IMAGE: ", delete_image);
         }
