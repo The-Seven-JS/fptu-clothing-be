@@ -190,7 +190,7 @@ const updatePhotoController = async (req, res) => {
                     public_id: result.public_id,
                     article_id: article_id
                 })
-                await pool.query("INSERT INTO article_images (public_id, article_id) VALUES ($1, $2)", [result.public_id, article_id]);
+                await pool.query("INSERT INTO article_images (public_id, article_id, url) VALUES ($1, $2, $3)", [result.public_id, article_id, result.secure_url]);
             })
             
             
