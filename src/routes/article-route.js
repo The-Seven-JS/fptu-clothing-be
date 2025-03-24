@@ -7,7 +7,10 @@ const requireAuth = require("../middleware/authmiddleware");
 router.get("/", articleController.getArticles);
 
 //Truy vấn 1 article
-router.get("/:article_id", articleController.getArticle);
+router.get("/get-article/:article_id", articleController.getArticle);
+
+// Truy vấn tất cả article draft
+router.get("/get-drafts", requireAuth, articleController.getDrafts);
 
 //Thêm một article mới
 router.post("/new", requireAuth, articleController.addArticle);

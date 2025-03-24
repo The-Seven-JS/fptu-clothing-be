@@ -60,6 +60,22 @@ const getArticle = async (req, res) => {
     }
 };
 
+// Truy vấn tất cả article drafts
+const getDrafts = async (req, res) => {
+    try {
+        const result = await pool.query ("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE status = 'draft'");
+        if (result.rows.length === 0) {
+            return res.status(404).send("Articles not found");
+        }
+        console.log(req.originalUrl);
+        console.log(result.rows);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error("Lỗi truy vấn:", err);
+        res.status(500).send("Lỗi server");
+    }
+}
+
 //Thêm một article mới - 1 draft, không có gì cả để updateArticle sau. (KHÔNG CÓ VLD)
 const addArticle = async (req, res) => {
     try {
@@ -198,6 +214,7 @@ const updateArticle = async (req, res) => {
 module.exports = {
     getArticles,
     getArticle,
+    getDrafts,
     addArticle,
     deleteArticle,
     deleteDrafts,
