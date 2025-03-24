@@ -6,7 +6,8 @@ const requireAuth = (req, res, next) => {
   console.log ("REQ HEADERS: ", req.headers);
   console.log ("REQ COOKIES: ", req.cookies);
   const token = req.cookies.jwt;
-  console.log ("TOKEN: ", token);
+  console.log(token);
+  console.log(req.cookies);
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodeToken) => {
       if (err) {

@@ -30,11 +30,6 @@ app.use(
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
 
 pool.query("SELECT NOW()", (err, res) => {
   if (err) console.error("Database connection error:", err);
@@ -46,12 +41,14 @@ app.use("/logout", logoutRoute);
 app.use("/api/demo", demoRouter);
 app.use("/", logicRoute);
 app.get("/", (req, res) => {
+  console.log(req.cookies);
   res.json({
     message: "welcome to our website",
   });
 });
 
 app.get("/admin", requireAuth, (req, res) => {
+  console.log(req.cookies);
   res.status(200).json({
     message: "success",
   });
