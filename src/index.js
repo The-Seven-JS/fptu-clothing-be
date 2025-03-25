@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://app.fuct.gay/",
+    origin: "https://app.fuct.gay",
     credentials: true,
   })
 );
