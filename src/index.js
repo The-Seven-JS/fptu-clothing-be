@@ -36,6 +36,12 @@ pool.query("SELECT NOW()", (err, res) => {
   else console.log("Connected to PostgreSQL at:", res.rows[0].now);
 });
 
+app.all("/", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
 app.use("/login", loginRoute);
 app.use("/logout", logoutRoute);
 app.use("/api/demo", demoRouter);
