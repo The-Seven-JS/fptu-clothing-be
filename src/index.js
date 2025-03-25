@@ -20,12 +20,21 @@ const commentRouter = require("./routes/comment-route");
 require("dotenv").config();
 
 const app = express();
+const allowedOrigins = [
+  "https://app.fuct.gay",
+  "http://localhost:5174",
+  "http://localhost:5173",
+];
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://app.fuct.gay",
-    methods: "GET,POST,PUT,DELETE,OPTIONS",
-    allowedHeaders: "Content-Type, Authorization",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Allow if in the list
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );

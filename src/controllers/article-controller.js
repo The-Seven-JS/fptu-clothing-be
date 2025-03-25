@@ -213,6 +213,7 @@ const deleteDrafts = async (req, res) => {
 const updateArticle = async (req, res) => {
   try {
     const { article_id } = req.params;
+    console.log(article_id);
     const validationError = validateRequestBody(req.body, uniqueKey);
     if (validationError) {
       return res.status(400).send(validationError);
