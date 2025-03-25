@@ -61,13 +61,11 @@ const getArticle = async (req, res) => {
     console.log("ARTICLE", result.rows);
     console.log("IMAGES", result2);
     console.log("COMMENTS", result3);
-    res
-      .status(200)
-      .json({
-        article: result.rows[0],
-        images: result2.rows,
-        comments: result3.rows,
-      });
+    res.status(200).json({
+      article: result.rows[0],
+      images: result2.rows,
+      comments: result3.rows,
+    });
   } catch (err) {
     console.error("Lỗi truy vấn:", err);
     res.status(500).send("Lỗi server");
@@ -160,12 +158,10 @@ const deleteArticle = async (req, res) => {
     console.log("DELETE ARTICLE: ", result.rows);
     if (result.rowCount === 0) return res.status(404).send("Article not found");
     else
-      res
-        .status(200)
-        .json({
-          message: "Article deleted successfully",
-          deletedArticle: result.rows[0],
-        });
+      res.status(200).json({
+        message: "Article deleted successfully",
+        deletedArticle: result.rows[0],
+      });
   } catch (err) {
     console.error("Lỗi truy vấn:", err);
     res.status(500).send("Lỗi server");
@@ -203,12 +199,10 @@ const deleteDrafts = async (req, res) => {
     console.log("DELETE ARTICLE DRAFT: ", result.rows);
     if (result.rowCount === 0) return res.status(404).send("Article not found");
     else
-      res
-        .status(200)
-        .json({
-          message: "Article draft deleted successfully",
-          deletedArticleDraft: result.rows,
-        });
+      res.status(200).json({
+        message: "Article draft deleted successfully",
+        deletedArticleDraft: result.rows,
+      });
   } catch (err) {
     console.error("Lỗi truy vấn:", err);
     res.status(500).send("Lỗi server");
@@ -224,6 +218,7 @@ const updateArticle = async (req, res) => {
       return res.status(400).send(validationError);
     }
     const { title, content } = req.body;
+    console.log(title, content);
     const numId = parseInt(article_id, 10);
     if (isNaN(numId) || numId <= 0) {
       return res.status(400).send("wrong id");
@@ -272,12 +267,10 @@ const updateArticle = async (req, res) => {
       [numId]
     );
     console.log(result1.rows);
-    res
-      .status(200)
-      .json({
-        message: "Article updated successfully",
-        updatedArticle: result1.rows[0],
-      });
+    res.status(200).json({
+      message: "Article updated successfully",
+      updatedArticle: result1.rows[0],
+    });
   } catch (err) {
     console.error("Lỗi truy vấn:", err);
     res.status(500).send("Lỗi server");
