@@ -6,6 +6,9 @@ const requireAuth = require("../middleware/authmiddleware");
 // Truy vấn tất cả articles
 router.get("/", articleController.getArticles);
 
+// Truy vấn tất cả articles theo một số chữ cái nhận được
+router.get("/get-articles-keyword", articleController.getArticlesKeyword);
+
 //Truy vấn 1 article
 router.get("/get-article/:article_id", articleController.getArticle);
 
