@@ -4,7 +4,7 @@ const commentController = require("../controllers/comment-controller");
 
 // Lấy toàn bộ comments
 router.get("/", commentController.getComments);
-// Lấy 1 comment theo id bài viết
+// Lấy toàn bộ comments theo 1 id bài viết
 router.get('/:article_id', commentController.getComment);
 // Thêm 1 comment mới vào bài viết cụ thể
 router.post("/new/:article_id", commentController.addComment);
