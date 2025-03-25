@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: true,
+    origin: "https://app.fuct.gay/",
     credentials: true,
   })
 );
@@ -34,12 +34,6 @@ app.use(cookieParser());
 pool.query("SELECT NOW()", (err, res) => {
   if (err) console.error("Database connection error:", err);
   else console.log("Connected to PostgreSQL at:", res.rows[0].now);
-});
-
-app.all("/", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
 });
 
 app.use("/login", loginRoute);
