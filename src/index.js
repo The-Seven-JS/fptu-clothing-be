@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(
   cors({
     origin: "https://app.fuct.gay",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization",
     credentials: true,
   })
 );
