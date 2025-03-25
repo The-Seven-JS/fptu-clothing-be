@@ -38,6 +38,23 @@ const getArticles = async (req, res) => {
   }
 };
 
+// Truy vấn tất cả articles theo một số chữ cái nhận được
+const getArticlesKeyword = async (req, res) => {
+  try {
+    const { keyword } = req.query;
+    //const result = await pool.query(SELECT * FROM articles WHERE title ILIKE '%' || $1 || '%' OR content ILIKE '%' || $1 || '%', [keyword]);
+    if (result.rows.length === 0) {
+      return res.status(404).send("Articles not found");
+    }
+    console.log(req.originalUrl);
+    console.log(result.rows);
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Lỗi truy vấn:", err);
+    res.status(500).send("Lỗi server");
+  }
+}
+
 // Truy vấn 1 article
 const getArticle = async (req, res) => {
   try {
@@ -280,6 +297,7 @@ const updateArticle = async (req, res) => {
 
 module.exports = {
   getArticles,
+  getArticlesKeyword,
   getArticle,
   getDrafts,
   addArticle,
