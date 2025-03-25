@@ -7,7 +7,10 @@ const requireAuth = require("../middleware/authmiddleware");
 router.get("/", articleController.getArticles);
 
 //Truy vấn 1 article
-router.get("/:article_id", articleController.getArticle);
+router.get("/get-article/:article_id", articleController.getArticle);
+
+// Truy vấn tất cả article draft
+router.get("/get-drafts", requireAuth, articleController.getDrafts);
 
 //Thêm một article mới
 router.post("/new", requireAuth, articleController.addArticle);
@@ -19,8 +22,8 @@ router.delete(
   articleController.deleteArticle
 );
 
-// Xoá một article draft
-router.delete("/delete-draft", requireAuth, articleController.deleteDraft);
+// Xoá tất cả article draft
+router.delete("/delete-drafts", requireAuth, articleController.deleteDrafts);
 
 //Chỉnh sửa một article
 router.put("/:article_id", requireAuth, articleController.updateArticle);
