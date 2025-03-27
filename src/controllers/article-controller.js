@@ -1,9 +1,9 @@
 const pool = require("../config/db");
 const cloudinary = require("cloudinary").v2;
-const santizeHtml = require("sanitize-html");
+const sanitizeHtml = require("sanitize-html");
 
 const cleanInput = (input) => {
-  return santizeHtml(input, {
+  return sanitizeHtml(input, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
   });
 }
@@ -270,7 +270,7 @@ const updateArticle = async (req, res) => {
       clear_content.search("</h1>") === -1 ||
       clear_content.search("<h1></h1>") !== -1 ||
       clear_content.search("</h2>") === -1 ||
-      clear_content.search('<h2 data-level="2"></h2>') !== -1
+      clear_content.search('<h2></h2>') !== -1
     ) {
       return res
         .status(400)
