@@ -3,10 +3,10 @@ const xss = require("xss");
 
 const getComments = async (req, res) => {
     try {
-        const result = await pool.query("SELECT * FROM comments");
+        const result = await pool.query("SELECT comment_id, username, content, email, article_id, TO_CHAR(created_at, 'DD-MM-YYYY HH24:MI:SS') AS created_at, count FROM comments");
         console.log (result.rows);
         if (result.rows.length === 0) {
-            return res.status(404).send("Comments not found");
+            return res.status(404).send("Comments not found");  
         }
         const sanitizedComments = result.rows.map(comment => ({
             comment_id: comment.comment_id,
@@ -43,7 +43,7 @@ const getComment = async (req, res) => {
             return res.status(404).send("Article not found");
         }
 
-        const result = await pool.query("SELECT * FROM comments WHERE article_id = $1", [article_id]);
+        const result = await pool.query("SELECT comment_id, username, content, email, article_id, TO_CHAR(created_at, 'DD-MM-YYYY HH24:MI:SS') AS created_at, count FROM comments WHERE article_id = $1", [article_id]);
         if (result.rows.length === 0) {
             return res.status(404).send("Comment not found");
         }
@@ -68,11 +68,17 @@ const getCommentLevel = async (req, res) => {
         const article_id = req.params.article_id
         const level = req.params.level;
         const result_article_id = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
-        console.log ("RESULT ARTICLE ID: " , result_article_id);
         if (result_article_id.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const result = await pool.query("SELECT * FROM comments WHERE article_id = $1 AND count >= $2 AND count <= $3", [article_id, (level-1)*10+1, level*10])
+        const count_result = await pool.query("SELECT COUNT(*) FROM articles INNER JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1", [article_id]);
+        console.log ("COUNT RESULT:", count_result)
+        console.log ("COUNT COMMENTS ARTICLE ID: " , count_result.rows[0].count);
+        if (count_result.rows[0].count === 0) {
+            return res.status(404).send("Comment not found");
+        }     
+        const count = count_result.rows[0].count
+        const result = await pool.query("SELECT comment_id, username, content, email, article_id, TO_CHAR(created_at, 'DD-MM-YYYY HH24:MI:SS') AS created_at, count FROM comments WHERE article_id = $1 AND count >= $2 AND count <= $3 ORDER BY count DESC", [article_id, count - level*10 + 1, count- (level-1)*10])
         console.log ("RESULT:", result.rows);
         const sanitizedComments = result.rows.map(comment => ({
             comment_id: comment.comment_id,
