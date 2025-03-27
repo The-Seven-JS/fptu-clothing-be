@@ -5,7 +5,6 @@ const cloudinary = require("cloudinary").v2
 const path = require("path")
 const { get } = require("http")
 const pool = require("../config/db");
-const fileType = require("file-type");
 const xss = require("xss");
 // Cloudinary configuration
 cloudinary.config({
@@ -25,14 +24,13 @@ const ALLOWED_EXTENSIONS = [
 
 // Validate file extension
 const fileFilter = (req, file, cb) => {
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-        return cb(new Error("Invalid MIME type: Only JPG, PNG, and WEBP files are allowed"), false);
+    const ext = path.extname(file.originalname).toLowerCase()
+    if (ALLOWED_EXTENSIONS.includes(ext)) {
+        cb(null, true)
+    } else {
+        cb(new Error(`Only ${ALLOWED_EXTENSIONS.join(", ")} files are allowed`))
     }
-
-    cb(null, true); 
-};
-
+}
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
@@ -77,13 +75,6 @@ const uploadToCloudinary = (file) => {
         })
     })
 }
-const verifyFileContent = async (filePath) => {
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    const detectedFileType = await fileType.fromFile(filePath);
-    if (!detectedFileType || !allowedMimeTypes.includes(detectedFileType.mime)) {
-        throw new Error("File content does not match extension");
-    }
-};
 
 const getURLController = async (req, res) => {
     try {
@@ -108,26 +99,16 @@ const getURLController = async (req, res) => {
 
 const addPhotoController = async (req, res) => {
     try {
-            const article_id = req.params.article_id;
+            const article_id = xss(req.params.article_id);
             const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
             if (result1.rows.length === 0) {
                 return res.status(404).send("Article not found");
             }
             console.log("BODY:", req.body);
             console.log ("FILES" ,req.files);
-
             if (!req.files || req.files.length === 0) {
                 return res.status(400).send("No file uploaded.")
             }   
-            
-            for (const file of req.files) {
-                try {
-                    await verifyFileContent(file.path);
-                } catch (error) {
-                    return res.status(400).send("File content does not match extension.");
-                }
-            }
-
              const result = await Promise.all(
                     req.files.map(file => uploadToCloudinary(file))
                 );
@@ -148,8 +129,8 @@ const addPhotoController = async (req, res) => {
 
 const deletePhotoController = async (req, res) => {
     try {
-        const publicId = xss(req.query.public_id);
-        const article_id = req.params.article_id;
+        const publicId = xss(req.params.public_id);
+        const article_id = xss(req.params.article_id);
         const result1 = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
         console.log ("RESULT 1: " , result1);
         if (result1.rows.length === 0) {
@@ -178,7 +159,7 @@ const updatePhotoController = async (req, res) => {
     try {
             console.log(req.originalUrl);
             const publicId = xss(req.params.public_id);
-            const article_id = req.params.article_id;
+            const article_id = xss(req.params.article_id);
             console.log("PUBLIC ID:", publicId);
             const result = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
             if (result.rows.length === 0) {
