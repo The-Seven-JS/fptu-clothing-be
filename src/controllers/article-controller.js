@@ -2,7 +2,11 @@ const pool = require("../config/db");
 const cloudinary = require("cloudinary").v2;
 const santizeHtml = require("sanitize-html");
 
-const cleanInput = (input) => santizeHtml(input);
+const cleanInput = (input) => {
+  return santizeHtml(input, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
+  });
+}
 
 
 // Cloudinary configuration
