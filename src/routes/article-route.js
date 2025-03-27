@@ -29,6 +29,6 @@ router.delete(
 router.delete("/delete-drafts", requireAuth, articleController.deleteDrafts);
 
 //Chỉnh sửa một article
-router.put("/:article_id",articleController.updateArticle);
+router.put("/:article_id", requireAuth, articleController.updateArticle);
 
 module.exports = router;
