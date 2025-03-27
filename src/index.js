@@ -17,6 +17,7 @@ const pool = require("./config/db");
 const path = require("path");
 const bodyParser = require("body-parser");
 const commentRouter = require("./routes/comment-route");
+const helmet = require("helmet");
 require("dotenv").config();
 
 const app = express();
@@ -41,6 +42,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(helmet()) // Bật tất cả tính năng bảo vệ của helmet
 
 pool.query("SELECT NOW()", (err, res) => {
   if (err) console.error("Database connection error:", err);
