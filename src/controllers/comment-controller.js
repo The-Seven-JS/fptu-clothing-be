@@ -8,7 +8,22 @@ const getComments = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send("Comments not found");
         }
-        res.status(200).json(result.rows);
+        const sanitizedComments = result.rows.map(comment => ({
+            comment_id: comment.comment_id,
+            username: xss(comment.username),
+            content: xss(comment.content),
+            email: xss(comment.email),
+            article_id: comment.article_id
+        }));
+
+
+
+
+        res.status(200).json(sanitizedComments);
+
+
+
+
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
@@ -30,7 +45,14 @@ const getComment = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send("Comment not found");
         }
-        res.status(200).json(result.rows);
+        const sanitizedComments = result.rows.map(comment => ({
+            comment_id: comment.comment_id,
+            username: xss(comment.username),
+            content: xss(comment.content),
+            email: xss(comment.email),
+            article_id: comment.article_id
+        }));
+        res.status(200).json(sanitizedComments);
     } catch (err) {
         console.error("Lỗi truy vấn:", err);
         res.status(500).send("Lỗi server");
