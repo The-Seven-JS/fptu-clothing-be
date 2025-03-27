@@ -51,7 +51,7 @@ const getArticlesKeyword = async (req, res) => {
     const { keyword } = req.query;
     console.log("keyword", keyword);
     console.log ("KEYWORD", `<h1>.*?${keyword}.*?</h1>`);
-    const result = await pool.query("SELECT * FROM articles WHERE status = 'completed' AND content  ~* $1", [`<h1.*?>.*?${keyword}.*?</h1>`]);
+    const result = await pool.query("SELECT * FROM articles WHERE status = 'completed' AND content ~* $1", [`<h1.*?>.*?${keyword}.*?</h1>`]);
     console.log ("RESULT KEYWORD", result.rows);
     if (result.rows.length === 0) {
       return res.status(404).send("Articles not found");
