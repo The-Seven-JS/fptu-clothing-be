@@ -2,20 +2,8 @@ const pool = require("../config/db");
 const cloudinary = require("cloudinary").v2;
 const santizeHtml = require("sanitize-html");
 
-const cleanInput = (input) => {
-  input = input.replace(/<script.*?>.*?<\/script>/gis, "");
-  return santizeHtml(input, {
-    allowedTags: ["p","h1", "h2", "h3", "br", "strong", "em", "figure", "img", "figcaption", "u", "li", "ul", "s", "input", "ol", "span", "a", "pre", "table", "tr", "td", "code"],
-    allowedAttributes: {"h1": ["class", "strong", "data-text-alignment", "data-background-color", "data-text-color"],
-       "h2": ["class", "data-level", "strong", "data-text-alignment", "data-background-color", "data-text-color"],
-       "h3" : ["strong", "data-level", "data-text-alignment", "data-background-color", "data-text-color"],
-        "figure": ["data-text-alignment", "data-name", "data-url", "data-caption", "data-preview-width"],
-        "td" : ["colspan", "rowspan"], "code" : ["class"],
-        "img": ["src", "alt", "width"], "p": ["strong", "data-text-alignment", "class"], "a": ["href", "target", "rel"]}, 
-        "span" : ["data-background-color", "data-text-color"], "input" : ["type", "checked"],
-    allowStyle: true
-  });
-}
+const cleanInput = (input) => santizeHtml(input);
+
 
 // Cloudinary configuration
 cloudinary.config({
