@@ -13,7 +13,7 @@ loginRoute.use(bodyParser.json());
 
 loginRoute.post("/", async (req, res) => {
   const { name, password } = req.body;
-  // if (!name?.trim() || password?.trim()) {
+  // if (!name?.trim() || !password?.trim()) {
   //   return res
   //     .status(400)
   //     .json({ error: "Username and password cannot be empty or spaces only." });
@@ -30,6 +30,7 @@ loginRoute.post("/", async (req, res) => {
 
     if (!passwordMatch)
       return res.status(400).json({ error: "Wrong password" });
+
     const token = createToken(name);
     res.cookie("jwt", token, {
       httpOnly: true,
@@ -39,7 +40,6 @@ loginRoute.post("/", async (req, res) => {
     });
     res.json({ message: "Login successful" });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: "User login failed" });
   }
 });
