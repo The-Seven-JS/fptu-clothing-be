@@ -5,9 +5,9 @@ const santizeHtml = require("sanitize-html");
 const cleanInput = (input) => {
   input = input.replace(/<script.*?>.*?<\/script>/gis, "");
   return santizeHtml(input, {
-    allowedTags: ["p","h1", "h2", "h3", "br", "strong", "em", "figure", "img", "figcaption"],
+    allowedTags: ["p","h1", "h2", "h3", "br", "strong", "em", "figure", "img", "figcaption", "u"],
     allowedAttributes: {"h1": ["class", "strong"], "h2": ["class", "data-level", "strong"], "h3" : ["strong", "data-level"],
-       "figure": ["data-text-alignment", "data-name", "data-url", "data-caption"], "img": ["src", "alt", "width"], "p": ["strong"]},
+       "figure": ["data-text-alignment", "data-name", "data-url", "data-caption", "data-preview-width"], "img": ["src", "alt", "width"], "p": ["strong"]},
   });
 }
 
