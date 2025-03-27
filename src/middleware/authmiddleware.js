@@ -12,14 +12,14 @@ const requireAuth = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodeToken) => {
       if (err) {
         console.log(err.message);
-        return res.status(401).json({ isAuthorized: "false" });
+        return res.status(401).json({ isAuthorized: false });
       } else {
         console.log(decodeToken);
         next();
       }
     });
   } else {
-    return res.status(401).json({ isAuthorized: "false" });
+    return res.status(401).json({ isAuthorized: false });
   }
 };
 
