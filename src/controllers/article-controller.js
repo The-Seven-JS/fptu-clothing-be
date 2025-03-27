@@ -122,7 +122,7 @@ const addArticle = async (req, res) => {
   try {
     const result = await pool.query(
       "INSERT INTO articles (title, content, status) VALUES ($1, $2, 'draft') RETURNING *",
-      ["New Post", "<p></p>"]
+      ["", "<p></p>"]
     );
     console.log(result.rows);
     const result1 = await pool.query(
