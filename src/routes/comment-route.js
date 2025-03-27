@@ -7,6 +7,8 @@ const requireAuth = require("../middleware/authmiddleware");
 router.get("/", commentController.getComments);
 // Lấy toàn bộ comments theo 1 id bài viết
 router.get('/:article_id', commentController.getComment);
+// Lấy 10 comments theo 1 id bài viết
+router.get('/:article_id/:level', commentController.getCommentLevel);
 // Thêm 1 comment mới vào bài viết cụ thể
 router.post("/new/:article_id", commentController.addComment);
 // Xoá 1 comment của 1 bài viết cụ thể
