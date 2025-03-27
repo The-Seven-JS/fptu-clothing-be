@@ -264,6 +264,7 @@ const updateArticle = async (req, res) => {
       return res.status(404).json({ error: "article not found" });
     }
     const clear_content = cleanInput(content); //Xoá các thẻ, attribute độc hại 
+    console.log ("CLEAR CONTENT", clear_content);
     if (
       title === "" ||
       clear_content.search("</h1>") === -1 ||
