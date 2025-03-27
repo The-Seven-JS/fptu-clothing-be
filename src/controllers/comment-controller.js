@@ -13,7 +13,8 @@ const getComments = async (req, res) => {
             username: xss(comment.username),
             content: xss(comment.content),
             email: xss(comment.email),
-            article_id: comment.article_id
+            article_id: comment.article_id,
+            count: comment.count
         }));
 
 
@@ -50,7 +51,8 @@ const getComment = async (req, res) => {
             username: xss(comment.username),
             content: xss(comment.content),
             email: xss(comment.email),
-            article_id: comment.article_id
+            article_id: comment.article_id,
+            count: comment.count
         }));
         res.status(200).json(sanitizedComments);
     } catch (err) {
@@ -59,8 +61,36 @@ const getComment = async (req, res) => {
     }
 };
 
-const addComment = async (req, res) => {
+const getCommentLevel = async (req, res) => {
     try {
+        const article_id = req.params.article_id
+        const level = req.params.level;
+        const result_article_id = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
+        console.log ("RESULT ARTICLE ID: " , result_article_id);
+        if (result_article_id.rows.length === 0) {
+            return res.status(404).send("Article not found");
+        }
+        const result = await pool.query("SELECT * FROM comments WHERE article_id = $1 AND count >= $2 AND count <= $3", [article_id, (level-1)*10+1, level*10])
+        console.log ("RESULT:", result.rows);
+        const sanitizedComments = result.rows.map(comment => ({
+            comment_id: comment.comment_id,
+            username: xss(comment.username),
+            content: xss(comment.content),
+            email: xss(comment.email),
+            article_id: comment.article_id,
+            count: comment.count
+        }));
+        res.status(200).json(sanitizedComments);
+    }
+    catch (err) {
+        console.error("Lỗi truy vấn:", err);
+        res.status(500).send("Lỗi server");
+    }
+}
+
+
+const addComment = async (req, res) => {
+     try {
         const article_id = req.params.article_id;
         const result_article_id = await pool.query("SELECT * FROM articles WHERE id = $1", [article_id]);
         console.log ("RESULT ARTICLE ID: " , result_article_id);
@@ -86,8 +116,13 @@ const addComment = async (req, res) => {
         content = xss(content);
         email = xss(email);
         console.log ("EMAIL: " , email);
-
-        const result = await pool.query("INSERT INTO comments (username, content, email, article_id) VALUES ($1, $2, $3, $4) RETURNING *", [username, content, email,article_id]);
+        const newest_result = await pool.query("SELECT * FROM comments WHERE article_id = $1 ORDER BY count DESC LIMIT 1", [article_id]);
+        let count;
+        if (newest_result.rows.length === 0) 
+            count = 1;
+        else
+            count = newest_result.rows[0].count + 1;
+        const result = await pool.query("INSERT INTO comments (username, content, email, article_id, count) VALUES ($1, $2, $3, $4, $5) RETURNING *", [username, content, email, article_id, count]);
         console.log(result.rows);
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -121,4 +156,4 @@ const deleteComment = async (req, res) => {
     }
 };
 
-module.exports = { getComments, getComment, addComment, deleteComment };
+module.exports = { getComments, getComment, getCommentLevel, addComment, deleteComment };
