@@ -14,6 +14,7 @@ const getComments = async (req, res) => {
             content: xss(comment.content),
             email: xss(comment.email),
             article_id: comment.article_id,
+            created_at: comment.created_at,
             count: comment.count
         }));
 
@@ -52,6 +53,7 @@ const getComment = async (req, res) => {
             content: xss(comment.content),
             email: xss(comment.email),
             article_id: comment.article_id,
+            created_at: comment.created_at,
             count: comment.count
         }));
         res.status(200).json(sanitizedComments);
@@ -78,6 +80,7 @@ const getCommentLevel = async (req, res) => {
             content: xss(comment.content),
             email: xss(comment.email),
             article_id: comment.article_id,
+            created_at: comment.created_at,
             count: comment.count
         }));
         res.status(200).json(sanitizedComments);
