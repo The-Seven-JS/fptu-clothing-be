@@ -12,7 +12,7 @@ const createToken = (name) => {
 loginRoute.use(bodyParser.json());
 
 loginRoute.post("/", async (req, res) => {
-  // const { name, password } = req.body;
+  const { name, password } = req.body;
   // if (!name?.trim() || password?.trim()) {
   //   return res
   //     .status(400)
