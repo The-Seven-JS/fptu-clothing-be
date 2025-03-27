@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-
+const xss = require("xss");
 const getComments = async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM comments");
