@@ -1,5 +1,14 @@
 const pool = require("../config/db");
 const cloudinary = require("cloudinary").v2;
+const santizeHtml = require("sanitize-html");
+
+const cleanInput = (input) => {
+  input = input.replace(/<script.*?>.*?<\/script>/gis, "");
+  return santizeHtml(input, {
+    allowedTags: ["p","h1", "h2", "h3", "br", "strong"],
+    allowedAttributes: {"h1": ["class", "strong"], "h2": ["class", "data-level", "strong"], "h3" : ["strong"]},
+  });
+}
 
 // Cloudinary configuration
 cloudinary.config({
@@ -232,6 +241,8 @@ const deleteDrafts = async (req, res) => {
 //Chỉnh sửa một article
 const updateArticle = async (req, res) => {
   try {
+    console.log ("REQ", req);
+    console.log ("RES", res);
     const { article_id } = req.params;
     console.log(article_id);
     const validationError = validateRequestBody(req.body, uniqueKey);
@@ -239,7 +250,8 @@ const updateArticle = async (req, res) => {
       return res.status(400).send(validationError);
     }
     const { title, content } = req.body;
-    console.log(title, content);
+    console.log("TITLE", title)
+    console.log ("CONTENT", content);
     const numId = parseInt(article_id, 10);
     if (isNaN(numId) || numId <= 0) {
       return res.status(400).send("wrong id");
@@ -252,13 +264,13 @@ const updateArticle = async (req, res) => {
     if (checkExist.rowCount === 0) {
       return res.status(404).json({ error: "article not found" });
     }
-
+    const clear_content = cleanInput(content); //Xoá các thẻ, attribute độc hại 
     if (
       title === "" ||
-      content.search("</h1>") === -1 ||
-      content.search("<h1></h1>") !== -1 ||
-      content.search("</h2>") === -1 ||
-      content.search('<h2 data-level="2"></h2>') !== -1
+      clear_content.search("</h1>") === -1 ||
+      clear_content.search("<h1></h1>") !== -1 ||
+      clear_content.search("</h2>") === -1 ||
+      clear_content.search('<h2 data-level="2"></h2>') !== -1
     ) {
       return res
         .status(400)
@@ -266,20 +278,20 @@ const updateArticle = async (req, res) => {
           "title should not be empty and content must have heading, summary"
         );
     }
-    if (typeof title !== "string" || typeof content !== "string") {
+    if (typeof title !== "string" || typeof clear_content !== "string") {
       return res.status(400).send("title and content must be strings");
     }
-    if (title === undefined || content === undefined) {
+    if (title === undefined || clear_content === undefined) {
       return res.status(400).send("title and content must be defined");
     }
 
-    if (content.trim() === "<p></p>") {
+    if (clear_content.trim() === "<p></p>") {
       return res.status(400).send("Content should not be empty");
     }
 
     const result = await pool.query(
       "UPDATE articles SET title = $1, content = $2, status = 'completed', updated_at = NOW() WHERE id = $3 RETURNING *",
-      [title, content, numId]
+      [title, clear_content, numId]
     );
     console.log(req.originalUrl);
     console.log(result.rows);
