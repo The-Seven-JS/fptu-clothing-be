@@ -44,9 +44,10 @@ const addComment = async (req, res) => {
         if (result_article_id.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const username = req.body.username;
+        let { username, content, email } = req.body;
+
         console.log ("USERNAME: " , username);
-        const content = req.body.content;
+
         console.log ("CONTENT: " , content);
         if (typeof content !== "string" || typeof username !== "string") {
             return res.status(400).send("username and content must be strings");
@@ -58,8 +59,11 @@ const addComment = async (req, res) => {
          if (username.trim() === "" || content.trim() === "") {
             return res.status(400).send("Usrname and content should not be empty");
         }
-        const email = req.body.email;
+        username = xss(username);
+        content = xss(content);
+        email = xss(email);
         console.log ("EMAIL: " , email);
+
         const result = await pool.query("INSERT INTO comments (username, content, email, article_id) VALUES ($1, $2, $3, $4) RETURNING *", [username, content, email,article_id]);
         console.log(result.rows);
         res.status(201).json(result.rows[0]);
