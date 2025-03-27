@@ -239,8 +239,6 @@ const deleteDrafts = async (req, res) => {
 //Chỉnh sửa một article
 const updateArticle = async (req, res) => {
   try {
-    console.log ("REQ", req);
-    console.log ("RES", res);
     const { article_id } = req.params;
     console.log(article_id);
     const validationError = validateRequestBody(req.body, uniqueKey);
@@ -312,8 +310,6 @@ const updateArticle = async (req, res) => {
 //Lưu một article draft sau khi không đủ tiêu chí
 const saveDraft = async (req, res) => {
   try {
-    console.log ("REQ", req);
-    console.log ("RES", res);
     const { article_id } = req.params;
     console.log(article_id);
     const validationError = validateRequestBody(req.body, uniqueKey);
@@ -357,6 +353,50 @@ const saveDraft = async (req, res) => {
   }
 }
 
+const changeStatus = async (req, res) => {
+  try {
+    const { article_id } = req.params;
+    const numId = parseInt(article_id, 10);
+    if (isNaN(numId) || numId <= 0) {
+      return res.status(400).send("wrong id");
+    }
+    const checkExist = await pool.query(
+      "SELECT * FROM articles WHERE id = $1",
+      [numId]
+    );
+    if (checkExist.rowCount === 0) {
+      return res.status(404).json({ error: "article not found" });
+    }
+    if (checkExist.rows[0].status === "completed") {
+      const result = await pool.query(
+        "UPDATE articles SET status = 'draft', updated_at = NOW() WHERE id = $1 RETURNING *",
+        [numId]
+      )
+      console.log ("RESULT ROWS: ", result.rows);
+    }
+    else {
+      const result = await pool.query(
+        "UPDATE articles SET status = 'completed', updated_at = NOW() WHERE id = $1 RETURNING *",
+        [numId]
+      );
+      console.log ("RESULT ROWS: ", result.rows);
+    }
+    console.log(req.originalUrl);
+    const result1 = await pool.query(
+      "SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE id = $1",
+      [numId]
+    );
+    console.log(result1.rows);
+    res.status(200).json({
+      message: "Article changed status successfully",
+      updatedArticle: result1.rows[0],
+    });
+  } catch (err) {
+    console.error("Lỗi truy vấn:", err);
+    res.status(500).send("Lỗi server");
+  }
+};
+
 module.exports = {
   getArticles,
   getArticlesKeyword,
@@ -367,4 +407,5 @@ module.exports = {
   deleteArticle,
   deleteDrafts,
   updateArticle,
+  changeStatus,
 };

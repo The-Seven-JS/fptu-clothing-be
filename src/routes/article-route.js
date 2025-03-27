@@ -34,4 +34,7 @@ router.put("/update-article/:article_id", requireAuth, articleController.updateA
 //Lưu một article draft sau khi không đủ tiêu chí
 router.put("/save-draft/:article_id", requireAuth, articleController.saveDraft);
 
+//Chỉnh sửa trạng thái từ completed thành draft và ngược lại
+router.patch("/change-status/:article_id", requireAuth, articleController.changeStatus);
+
 module.exports = router;
