@@ -12,12 +12,12 @@ const createToken = (name) => {
 loginRoute.use(bodyParser.json());
 
 loginRoute.post("/", async (req, res) => {
-  const { name, password } = req.body;
-  if (!name?.trim() || password?.trim()) {
-    return res
-      .status(400)
-      .json({ error: "Username and password cannot be empty or spaces only." });
-  }
+  // const { name, password } = req.body;
+  // if (!name?.trim() || password?.trim()) {
+  //   return res
+  //     .status(400)
+  //     .json({ error: "Username and password cannot be empty or spaces only." });
+  // }
   try {
     const result = await pool.query("SELECT * FROM admin WHERE name = $1", [
       name,
