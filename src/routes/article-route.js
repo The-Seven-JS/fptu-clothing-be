@@ -29,6 +29,12 @@ router.delete(
 router.delete("/delete-drafts", requireAuth, articleController.deleteDrafts);
 
 //Chỉnh sửa một article
-router.put("/:article_id", requireAuth, articleController.updateArticle);
+router.put("/update-article/:article_id", requireAuth, articleController.updateArticle);
+
+//Lưu một article draft sau khi không đủ tiêu chí
+router.put("/save-draft/:article_id", requireAuth, articleController.saveDraft);
+
+//Chỉnh sửa trạng thái từ completed thành draft và ngược lại
+router.patch("/change-status/:article_id", requireAuth, articleController.changeStatus);
 
 module.exports = router;
