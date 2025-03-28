@@ -35,6 +35,6 @@ router.put("/update-article/:article_id", requireAuth, articleController.updateA
 router.put("/save-draft/:article_id", requireAuth, articleController.saveDraft);
 
 //Chỉnh sửa trạng thái từ completed thành draft và ngược lại
-router.patch("/change-status/:article_id", requireAuth, articleController.changeStatus);
+//router.patch("/change-status/:article_id", requireAuth, articleController.changeStatus);
 
 module.exports = router;
