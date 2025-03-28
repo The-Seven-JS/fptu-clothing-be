@@ -71,7 +71,7 @@ const getCommentLevel = async (req, res) => {
         if (result_article_id.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const count_result = await pool.query("SELECT COUNT(*) FROM articles INNER JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1", [article_id]);
+        const count_result = await pool.query("SELECT count FROM articles INNER JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1 ORDER BY count DESC LIMIT 1", [article_id]);
         console.log ("COUNT RESULT:", count_result)
         console.log ("COUNT COMMENTS ARTICLE ID: " , count_result.rows[0].count);
         if (count_result.rows[0].count === 0) {
