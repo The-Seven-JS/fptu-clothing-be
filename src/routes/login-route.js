@@ -2,7 +2,7 @@ const { Router } = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const pool = require("../../database/database");
+const pool = require("../config/db");
 const loginRoute = Router();
 
 const createToken = (name) => {
@@ -13,6 +13,11 @@ loginRoute.use(bodyParser.json());
 
 loginRoute.post("/", async (req, res) => {
   const { name, password } = req.body;
+  if (!name?.trim() || !password?.trim()) {
+    return res
+      .status(400)
+      .json({ error: "Username and password cannot be empty or spaces only." });
+  }
   try {
     const result = await pool.query("SELECT * FROM admin WHERE name = $1", [
       name,
@@ -30,7 +35,7 @@ loginRoute.post("/", async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "None",
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
     });
     res.json({ message: "Login successful" });

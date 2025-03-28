@@ -9,18 +9,38 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
+<<<<<<< HEAD
 	"description": "aNH qUÝ 10 điem",
 	"dependencies": {
 		"bcryptjs": "^3.0.2",
 		"body-parser": "^1.20.3",
+=======
+	"description": "aNH qUÝ âm điểm",
+	"dependencies": {
+		"bcryptjs": "^3.0.2",
+		"body-parser": "^1.20.3",
+		"cloudinary": "^2.5.1",
+>>>>>>> master
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.7",
 		"ejs": "^3.1.10",
 		"express": "^4.21.2",
+<<<<<<< HEAD
 		"http-errors": "^2.0.0",
 		"jsonwebtoken": "^9.0.2",
 		"pg": "^8.13.3"
+=======
+		"file-type": "^20.4.1",
+		"helmet": "^8.1.0",
+		"http-errors": "^2.0.0",
+		"jsonwebtoken": "^9.0.2",
+		"multer": "^1.4.5-lts.1",
+		"pg": "^8.13.3",
+		"pg-format": "^1.0.4",
+		"sanitize-html": "^2.15.0",
+		"xss": "^1.0.15"
+>>>>>>> master
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.9"
@@ -32,5 +52,10 @@
 	"bugs": {
 		"url": "https://github.com/The-Seven-JS/fptu-clothing-be/issues"
 	},
+<<<<<<< HEAD
 	"homepage": "https://github.com/The-Seven-JS/fptu-clothing-be#readme"
+=======
+	"homepage": "https://github.com/The-Seven-JS/fptu-clothing-be#readme",
+	"type": "commonjs"
+>>>>>>> master
 }
