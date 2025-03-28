@@ -15,7 +15,6 @@ const getComments = async (req, res) => {
             email: xss(comment.email),
             article_id: comment.article_id,
             created_at: comment.created_at,
-            count: comment.count
         }));
 
 
@@ -53,8 +52,7 @@ const getComment = async (req, res) => {
             content: xss(comment.content),
             email: xss(comment.email),
             article_id: comment.article_id,
-            created_at: comment.created_at,
-            count: comment.count
+            created_at: comment.created_at
         }));
         res.status(200).json(sanitizedComments);
     } catch (err) {
@@ -71,14 +69,13 @@ const getCommentLevel = async (req, res) => {
         if (result_article_id.rows.length === 0) {
             return res.status(404).send("Article not found");
         }
-        const count_result = await pool.query("SELECT count FROM articles INNER JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1 ORDER BY count DESC LIMIT 1", [article_id]);
-        console.log ("COUNT RESULT:", count_result)
-        console.log ("COUNT COMMENTS ARTICLE ID: " , count_result.rows[0].count);
-        if (count_result.rows[0].count === 0) {
+        const count_comment = await pool.query("SELECT COUNT(*) FROM comments WHERE article_id = $1", [article_id]);
+        console.log ("COUNT RESULT:", count_comment.rows);
+        if (count_comment.rows[0].count === 0) {
             return res.status(404).send("Comment not found");
-        }     
-        const count = count_result.rows[0].count
-        const result = await pool.query("SELECT comment_id, username, content, email, article_id, TO_CHAR(created_at, 'DD-MM-YYYY HH24:MI:SS') AS created_at, count FROM comments WHERE article_id = $1 AND count >= $2 AND count <= $3 ORDER BY count DESC", [article_id, count - level*10 + 1, count- (level-1)*10])
+        }   
+        const count = count_comment.rows[0].count;
+        const result = await pool.query("SELECT * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY comment_id) AS temp_id, comment_id, username, content, email, article_id, TO_CHAR(created_at, 'DD-MM-YYYY HH24:MI:SS') AS created_at FROM comments WHERE article_id = $1) WHERE temp_id >= $2 AND temp_id <= $3 ORDER BY temp_id DESC", [article_id, count - level*10 + 1, count- (level-1)*10])
         console.log ("RESULT:", result.rows);
         const sanitizedComments = result.rows.map(comment => ({
             comment_id: comment.comment_id,
@@ -87,7 +84,6 @@ const getCommentLevel = async (req, res) => {
             email: xss(comment.email),
             article_id: comment.article_id,
             created_at: comment.created_at,
-            count: comment.count
         }));
         res.status(200).json(sanitizedComments);
     }
