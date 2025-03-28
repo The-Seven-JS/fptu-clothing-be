@@ -59,7 +59,7 @@ const getArticlesKeyword = async (req, res) => {
     console.log ("KEYWORD", `<h1>.*?${keyword}.*?</h1>`);
     const escape_keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     console.log ("ESCAPE KEYWORD", escape_keyword);
-    const result = await pool.query("SELECT * FROM articles WHERE status = 'completed' AND content ~* $1", [`<h1(?!/d)[^>]*>.*?${escape_keyword}.*?</h1>`]);
+    const result = await pool.query("SELECT id, TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at, title, content, status, TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM articles WHERE status = 'completed' AND content ~* $1", [`<h1(?!/d)[^>]*>.*?${escape_keyword}.*?</h1>`]);
     console.log ("RESULT KEYWORD", result.rows);
     if (result.rows.length === 0) {
       return res.status(404).send("Articles not found");
