@@ -48,7 +48,13 @@ const getArticles = async (req, res) => {
 // Truy vấn tất cả articles theo một số chữ cái nhận được
 const getArticlesKeyword = async (req, res) => {
   try {
+    
     const { keyword } = req.query;
+
+    if (!keyword || keyword.trim() === "") {
+      return res.status(404).send("Articles not found");
+    }
+    
     console.log("keyword", keyword);
     console.log ("KEYWORD", `<h1>.*?${keyword}.*?</h1>`);
     const result = await pool.query("SELECT * FROM articles WHERE status = 'completed' AND content ~* $1", [`<h1.*?>.*?${keyword}.*?</h1>`]);
