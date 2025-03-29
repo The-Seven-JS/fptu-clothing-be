@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 const loginRoute = Router();
-const xss = require("xss");
+
 
 const createToken = (name) => {
   return jwt.sign({ name }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -13,7 +13,7 @@ const createToken = (name) => {
 loginRoute.use(bodyParser.json());
 
 loginRoute.post("/", async (req, res) => {
-  const { name, password } = xss(req.body);
+  const { name, password } = req.body;
   if (!name?.trim() || !password?.trim()) {
     return res
       .status(400)
