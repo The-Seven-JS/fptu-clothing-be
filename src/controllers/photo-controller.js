@@ -1,5 +1,6 @@
 require("dotenv").config()
 const multer = require("multer")
+const fileType = require("file-type")
 const fs = require("fs")
 const cloudinary = require("cloudinary").v2
 const path = require("path")
@@ -32,6 +33,12 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
+const validateFileType = async (filePath) => {
+    const buffer = fs.readFileSync(filePath);
+    const type = await fileType.fromBuffer(buffer);
+    return type && ALLOWED_EXTENSIONS.includes(`.${type.ext}`);
+}
+
 // Configure multer for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -59,7 +66,11 @@ if (!fs.existsSync("uploads")) {
 }
 
 // Utility function for Cloudinary upload
-const uploadToCloudinary = (file) => {
+const uploadToCloudinary = async (file) => {
+    if (!(await validateFileType(file.path))) {
+        fs.unlinkSync(file.path); // Xóa file không hợp lệ
+        throw new Error("Invalid file type");
+    }
     return new Promise((resolve, reject) => {
          cloudinary.uploader.upload(file.path, (error, result) => {
             if (error) {
