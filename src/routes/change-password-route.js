@@ -3,11 +3,12 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const pool = require("../config/db");
 const changePassRoute = Router();
+const xss = require("xss");
 
 changePassRoute.use(bodyParser.json());
 
 changePassRoute.patch("/", async (req, res) => {
-  const { oldPass, newPass, retypePass } = req.body;
+  const { oldPass, newPass, retypePass } = xss(req.body);
   if (!oldPass?.trim() || newPass?.trim() || retypePass?.trim()) {
     return res
       .status(400)
