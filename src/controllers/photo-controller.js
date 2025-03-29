@@ -35,7 +35,7 @@ const fileFilter = (req, file, cb) => {
 
 const validateFileType = async (filePath) => {
     const buffer = fs.readFileSync(filePath);
-    const type = await fileType.fromBuffer(buffer);
+    const type = await fileType.fileTypeFromBuffer(buffer);
     return type && ALLOWED_EXTENSIONS.includes(`.${type.ext}`);
 }
 

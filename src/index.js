@@ -80,7 +80,7 @@ app.use((req, res, next) => {
 app.use("/articles", articleRouter);
 
 // Sử dụng router của photos.js
-app.use("/photos", requireAuth, photoRouter);
+app.use("/photos", photoRouter);
 // Router đổi mật khẩu
 app.use("/changepass", requireAuth, changePassRoute);
 
